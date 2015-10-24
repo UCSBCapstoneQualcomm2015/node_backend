@@ -10,9 +10,9 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 
 // Connect to the RFID MongoDB
-mongoose.connect('mongodb://localhost:27017/rfid_tags');
+mongoose.connect('mongodb://localhost:27017/rfid_tags_db');
 
-
+// Create our Express application
 var app = express();
 
 // view engine setup
