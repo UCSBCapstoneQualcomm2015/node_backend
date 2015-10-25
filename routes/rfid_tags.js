@@ -46,3 +46,33 @@ exports.getRfid_tag = function(req, res) {
 	});
 };
 
+
+// Create endpoint for /api/:rfid_tags for PUT
+exports.putRfid_tag = function(req, res) {
+	// Use the rfid_tags model to modify rfid_tag
+	Rfid.findById(req.params.rfid_tag_id, function(err, rfid_tag) {
+		if (err)
+			res.send(err);
+
+		// Update the existing location (can modify to add anything)
+		rfid_tag.location = req.body.location;
+
+		// Save the rfid_tag and check for errors
+		rfid_tag.save(function(err) {
+			if (err)
+				res.send(err);
+			res.json(rfid_tag);
+		});
+	});
+};
+
+
+// Create endpoint /api/rfid_tags/:rfid_id for DELETE
+exports.deleteRfid_tag = function(req,res) {
+	// Use the ID to delete a specific rfid_tag
+	Rfid.remove({ _id: req.params.rfid_tag_id}, function(err) {
+		if (err)
+			res.send(err);
+		res.json({message: 'RFID tag has been removed from the database'});
+	});
+};
