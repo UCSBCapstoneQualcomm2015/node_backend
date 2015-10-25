@@ -22,3 +22,16 @@ exports.postRfid_tags = function(req, res) {
 		res.json({ message: 'RFID tag added to the database ', data: rfid_tags });
 	});
 };
+
+
+// Create endpoint /api/rfid_tags for GET 
+exports.getRfid_tags = function(req, res) {
+
+	// Use the rfid_tags model to find all the rfid_tags
+	Rfid.find(function (err, rfid_tags) {
+		if (err)
+			res.send(err);
+
+		res.json(rfid_tags);
+	});
+};
