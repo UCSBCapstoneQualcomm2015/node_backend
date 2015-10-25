@@ -49,6 +49,10 @@ router.route('/rfid_tags')
   .post(rfidController.postRfid_tags)
   .get(rfidController.getRfid_tags);
 
+// Create endpoint handlers for /rfid_tags/:rfid_tag_id
+router.route('/rfid_tags/:rfid_tag_id')
+  .get(rfidController.getRfid_tag);
+
 // Register all routes with /api
 app.use('/api', router);
 

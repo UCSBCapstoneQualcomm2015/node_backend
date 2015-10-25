@@ -35,3 +35,14 @@ exports.getRfid_tags = function(req, res) {
 		res.json(rfid_tags);
 	});
 };
+
+// Create endpoint for /api/:rfid_tags for GET
+exports.getRfid_tag = function(req, res) {
+	// Use the rfid_tags model to get a specific rfid_tag
+	Rfid.findById(req.params.rfid_tag_id, function (err, rfid_tag) {
+		if (err)
+			res.send(err);
+		res.json(rfid_tag);
+	});
+};
+
