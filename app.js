@@ -6,8 +6,10 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var passport = require('passport');
 
 
+var authController = require('./routes/auth');
 var Rfid = require('./models/rfid_tags'); 
 var routes = require('./routes/index');
 var userController = require('./routes/users');
@@ -47,19 +49,19 @@ app.use('/', routes);
 
 // Create endpoint handlers for /rfid_tags
 router.route('/rfid_tags')
-  .post(rfidController.postRfid_tags)
-  .get(rfidController.getRfid_tags);
+  .post(authController.isAuthenticated, rfidController.postRfid_tags)
+  .get(authController.isAuthenticated, rfidController.getRfid_tags);
 
 // Create endpoint handlers for /rfid_tags/:rfid_tag_id
 router.route('/rfid_tags/:rfid_tag_id')
-  .get(rfidController.getRfid_tag)
-  .put(rfidController.putRfid_tag)
-  .delete(rfidController.deleteRfid_tag);
+  .get(authController.isAuthenticated, rfidController.getRfid_tag)
+  .put(authController.isAuthenticated, rfidController.putRfid_tag)
+  .delete(authController.isAuthenticated, rfidController.deleteRfid_tag);
 
 // Create endpoint handlers for /users
 router.route('/users')
-  .post(userController.postUsers)
-  .get(userController.getUsers);
+  .post(authController.isAuthenticated, userController.postUsers)
+  .get(authController.isAuthenticated, userController.getUsers);
 
 
 // Register all routes with /api
