@@ -10,8 +10,9 @@ var mongoose = require('mongoose');
 
 var Rfid = require('./models/rfid_tags'); 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var userController = require('./routes/users');
 var rfidController = require('./routes/rfid_tags');
+
 
 
 
@@ -42,7 +43,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 
 // Create endpoint for /users
-app.use('/users', users);
+//app.use('/users', users);
 
 // Create endpoint handlers for /rfid_tags
 router.route('/rfid_tags')
@@ -54,6 +55,12 @@ router.route('/rfid_tags/:rfid_tag_id')
   .get(rfidController.getRfid_tag)
   .put(rfidController.putRfid_tag)
   .delete(rfidController.deleteRfid_tag);
+
+// Create endpoint handlers for /users
+router.route('/users')
+  .post(userController.postUsers)
+  .get(userController.getUsers);
+
 
 // Register all routes with /api
 app.use('/api', router);
