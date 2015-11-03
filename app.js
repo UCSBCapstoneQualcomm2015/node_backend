@@ -41,8 +41,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(passport.initialize());
 // Create endpoint for /
 app.use('/', routes);
+
 
 // Create endpoint for /users
 //app.use('/users', users);
