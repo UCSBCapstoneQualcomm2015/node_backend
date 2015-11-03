@@ -6,7 +6,8 @@ var RfidSchema = new mongoose.Schema({
 	tagId: String,
 	readerId: String,
 	location: String,
-	reference: Boolean
+	reference: Boolean,
+	userId: String
 });
 
 // Export the Mongoose model
