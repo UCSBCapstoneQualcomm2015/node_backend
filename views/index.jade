@@ -1,5 +1,19 @@
+include mixins
+
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	body(style="padding-bottom:10rem; padding-top:10rem;")
+		.container
+			script( src='//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js')
+			script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
+
+			.jumbotron
+				h1 #{title}
+
+				p
+					p: +button("primary", "/login", "large") Login
+					p: +button("primary", "/signup", "large") Sign Up
+
+
+

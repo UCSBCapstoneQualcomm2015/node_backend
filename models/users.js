@@ -4,17 +4,33 @@ var bcrypt = require('bcrypt-nodejs');
 
 // Create the schema for the users 
 var userSchema = new mongoose.Schema ({
-	username: {
-		type: String,
-		unique: true,
-		required: true
-	},
-	password: {
-		type: String,
-		required: true
+	local:{
+		username: {
+			type: String,
+			unique: true,
+			required: true
+		},
+		password: {
+			type: String,
+			required: true
+		}
 	}
 });
 
+//---------- New Code ------------------//
+// Generating a hash
+userSchema.methods.generateHash = function(password) {
+	return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
+};
+
+
+// Check if the password is valid
+userSchema.methods.validPassword = function(password) {
+	return bcrypt.compareSync(password, this.local.password);
+};
+
+//---------- Old Code -----------------//
+/*
 // Execute before each user.save() call
 userSchema.pre('save', function(callback) {
 	var user = this;
@@ -42,6 +58,8 @@ userSchema.methods.verifyPassword = function(password, cb) {
     cb(null, isMatch);
   });
 };
+*/
+
 
 // Export the Mongoose model
 module.exports = mongoose.model('User', userSchema);

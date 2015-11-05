@@ -40,10 +40,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use(passport.initialize());
-// Create endpoint for /
-app.use('/', routes);
+
+
+// Create endpoint for / (AKA Homepage)
+router.route('/')
+  .get(routes.getHomepage);
+
+//app.use('/', routes);
 
 
 // Create endpoint for /users
@@ -67,8 +71,8 @@ router.route('/users')
 
 
 // Register all routes with /api
-app.use('/api', router);
-
+//app.use('/api', router);
+app.use('/', router);
 
 
 // catch 404 and forward to error handler

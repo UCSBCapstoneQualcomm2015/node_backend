@@ -1,0 +1,23 @@
+include mixins
+
+extends layout
+
+block content
+	body(style="padding-bottom:10rem; padding-top:10rem;")
+		.container
+			script( src='//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js')
+			script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
+
+			.sign-in
+				h1 Login
+
+				// - Login form 
+				form.form-signin(action="/login", method="post")
+					h2.form-signin-heading Please Sign In
+					input.input-block-level(type="text", name="username", placeholder="Username")
+					input.input-block-level(type="password", name="password", placeholder="Password")
+					label.checkbox.
+						<input type="checkbox" value="remember-me" /> Remember me
+					p: +button("submit", "undefined", "large") Sign In
+					p.
+						Need an account? a( href="/signup") Sign Up
