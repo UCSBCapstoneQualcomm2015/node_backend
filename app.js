@@ -38,8 +38,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Create endpoint for /
-app.use('/', routes);
+// Create endpoint for / (AKA Homepage)
+router.route('/')
+  .get(routes.getHomepage);
+
+//app.use('/', routes);
+//app.use('/', router);
 
 // Create endpoint for /users
 app.use('/users', users);
@@ -56,7 +60,7 @@ router.route('/rfid_tags/:rfid_tag_id')
   .delete(rfidController.deleteRfid_tag);
 
 // Register all routes with /api
-app.use('/api', router);
+app.use('/', router);
 
 
 
