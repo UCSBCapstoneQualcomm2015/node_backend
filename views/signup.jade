@@ -14,7 +14,7 @@ block content
 				br
 				form.form-horizontal(action='/login', method='post')
 					fieldset
-						h1 Login
+						h1 Sign Up
 
 						div.control-group
 							label.control-label(for='inputUserName') Your Name
@@ -27,7 +27,7 @@ block content
 						br
 						div.control-group
 							div.controls
-								+button("primary", "/login", "small") Login
-				p Don't have an account? 
-					a(href='/signup') Sign Up
+								+button("primary", "/profile", "small") Sign Up
+				p Already registered?  
+					a(href='/login') Login
 
