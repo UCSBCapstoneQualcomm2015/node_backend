@@ -13,6 +13,7 @@ exports.postRfid_tags = function(req, res) {
 	rfid_tags.readerId = req.body.readerId;
 	rfid_tags.location = req.body.location;
 	rfid_tags.reference = req.body.reference;
+	rfid_tags.userId = req.user._id;
 
 	// Save the RFID tag info and check for errors
 	rfid_tags.save(function(err) {
@@ -28,11 +29,12 @@ exports.postRfid_tags = function(req, res) {
 exports.getRfid_tags = function(req, res) {
 
 	// Use the rfid_tags model to find all the rfid_tags
-	Rfid.find(function (err, rfid_tags) {
+	Rfid.find({ userId: req.user._id }, function (err, rfid_tags) {
 		if (err)
 			res.send(err);
 
-		res.json(rfid_tags);
+		//res.json(rfid_tags);
+		res.render('home', { data : rfid_tags});
 	});
 };
 

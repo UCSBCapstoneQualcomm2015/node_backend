@@ -9,11 +9,8 @@ var mongoose = require('mongoose');
 
 
 var Rfid = require('./models/rfid_tags'); 
-var routes = require('./routes/index');
 var users = require('./routes/users');
 var rfidController = require('./routes/rfid_tags');
-
-
 
 
 // Connect to the RFID MongoDB
@@ -38,18 +35,29 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Create endpoint for / (AKA Homepage)
-router.route('/')
-  .get(routes.getHomepage);
+// Configuring Passport
+var passport = require('passport');
+var expressSession = require('express-session');
+app.use(expressSession({secret: 'mySecretKey'}));
+app.use(passport.initialize());
+app.use(passport.session());
 
-//app.use('/', routes);
-//app.use('/', router);
 
+// Using the flash middleware provided by connect-flash to store messages in session
+// and displaying in templates
+var flash = require('connect-flash');
+app.use(flash());
+// Initialize Passport
+var initPassport = require('./passport/init');
+initPassport(passport);
+
+var routes = require('./routes/index')(passport);
+app.use('/', routes);
 // Create endpoint for /users
 app.use('/users', users);
 
 // Create endpoint handlers for /rfid_tags
-router.route('/rfid_tags')
+router.route('/home')
   .post(rfidController.postRfid_tags)
   .get(rfidController.getRfid_tags);
 
@@ -58,10 +66,6 @@ router.route('/rfid_tags/:rfid_tag_id')
   .get(rfidController.getRfid_tag)
   .put(rfidController.putRfid_tag)
   .delete(rfidController.deleteRfid_tag);
-
-// Register all routes with /api
-app.use('/', router);
-
 
 
 // catch 404 and forward to error handler
