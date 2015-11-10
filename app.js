@@ -57,9 +57,9 @@ app.use('/', routes);
 app.use('/users', users);
 
 // Create endpoint handlers for /rfid_tags
-router.route('/home')
-  .post(rfidController.postRfid_tags)
-  .get(rfidController.getRfid_tags);
+//router.route('/home')
+//  .post(rfidController.postRfid_tags)
+//  .get(rfidController.getRfid_tags);
 
 // Create endpoint handlers for /rfid_tags/:rfid_tag_id
 router.route('/rfid_tags/:rfid_tag_id')

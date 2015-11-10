@@ -8,10 +8,12 @@ var isAuthenticated = function (req, res, next) {
 	// if user is authenticated in the session, call the next() to call the next request handler 
 	// Passport adds this method to request object. A middleware is allowed to add properties to
 	// request and response objects
+	console.log("hello");
 	if (req.isAuthenticated())
 		return next();
 	// if the user is not authenticated then redirect him to the login page
 	res.redirect('/');
+	console.log("hello2");
 }
 
 
@@ -45,12 +47,41 @@ module.exports = function(passport){
 
 	/* GET Home Page */
 	router.get('/home', isAuthenticated, function(req, res){
+		// Use the rfid_tags model to find all the rfid_tags for a user
+		var headings = ['Tag ID', 'Reference', 'Location', 'Reader ID'];
 		// Use the rfid_tags model to find all the rfid_tags
 		Rfid.find({ userId: req.user._id }, function (err, rfid_tags) {
 			if (err)
 				res.send(err);
-			res.json(rfid_tags);
-			//res.render('home', { user: req.user, data: rfid_tags });
+
+			//res.json(rfid_tags);
+			res.render('rfid_tags', {
+				data_rfidTags : rfid_tags,
+				title : 'All User Tags',
+				heading : headings
+			});
+		});
+	});
+
+
+	router.post('/home', function(req,res){
+		// Create new instance of the RFID_tag model
+		var rfid_tags = new Rfid();
+
+		// Set the rfid_tags properties from POST data
+		rfid_tags.tagId = req.body.tagId;
+		rfid_tags.readerId = req.body.readerId;
+		rfid_tags.location = req.body.location;
+		rfid_tags.reference = req.body.reference;
+		//rfid_tags.userId = req.user._id;
+		rfid_tags.userId = req.body.userId;
+
+		// Save the RFID tag info and check for errors
+		rfid_tags.save(function(err) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'RFID tag added to the database ', data: rfid_tags });
 		});
 	});
 

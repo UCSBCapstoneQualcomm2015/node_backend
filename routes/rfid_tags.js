@@ -17,8 +17,8 @@ exports.postRfid_tags = function(req, res) {
 
 	// Save the RFID tag info and check for errors
 	rfid_tags.save(function(err) {
-		if (err)
-			res.send(err);
+		//if (err)
+			//res.send(err);
 
 		res.json({ message: 'RFID tag added to the database ', data: rfid_tags });
 	});
@@ -28,13 +28,18 @@ exports.postRfid_tags = function(req, res) {
 // Create endpoint /api/rfid_tags for GET 
 exports.getRfid_tags = function(req, res) {
 
+	var headings = ['Tag ID', 'Reference', 'Location', 'Reader ID'];
 	// Use the rfid_tags model to find all the rfid_tags
-	Rfid.find({ userId: req.user._id }, function (err, rfid_tags) {
+	Rfid.find(function (err, rfid_tags) {
 		if (err)
 			res.send(err);
 
 		//res.json(rfid_tags);
-		res.render('home', { data : rfid_tags});
+		res.render('rfid_tags', {
+			data_rfidTags : rfid_tags,
+			title : 'All User Tags',
+			heading : headings
+		});
 	});
 };
 
