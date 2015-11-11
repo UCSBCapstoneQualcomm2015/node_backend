@@ -45,6 +45,14 @@ module.exports = function(passport){
 		failureFlash : true  
 	}));
 
+	/* Get Add tag form */
+	router.get('/add_tag', function(req,res) {
+		res.render('add_tag');
+	});
+
+
+
+
 	/* GET Home Page */
 	router.get('/home', isAuthenticated, function(req, res){
 		// Use the rfid_tags model to find all the rfid_tags for a user
@@ -67,22 +75,25 @@ module.exports = function(passport){
 	router.post('/home', function(req,res){
 		// Create new instance of the RFID_tag model
 		var rfid_tags = new Rfid();
-
+		var headings = ['Tag ID', 'Reference', 'Location', 'Reader ID'];
 		// Set the rfid_tags properties from POST data
 		rfid_tags.tagId = req.body.tagId;
 		rfid_tags.readerId = req.body.readerId;
 		rfid_tags.location = req.body.location;
 		rfid_tags.reference = req.body.reference;
 		//rfid_tags.userId = req.user._id;
-		rfid_tags.userId = req.body.userId;
+		rfid_tags.userId = req.user._id;
 
 		// Save the RFID tag info and check for errors
 		rfid_tags.save(function(err) {
 			if (err)
 				res.send(err);
 
-			res.json({ message: 'RFID tag added to the database ', data: rfid_tags });
+			//res.json({ message: 'RFID tag added to the database ', data: rfid_tags });
 		});
+
+		res.redirect('/home');
+
 	});
 
 	/* Handle Logout */
