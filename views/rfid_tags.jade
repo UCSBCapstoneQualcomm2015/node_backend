@@ -1,37 +1,43 @@
-include mixins
-
 extends layout
 
 block content
-	body(style="padding-bottom:10rem; padding-top:10rem; padding-right:10rem; padding-left:10rem; ")
-			.container
-				script( src='//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js')
-				script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
 
-				.dropdown
-					+nav("Sniffit", "dropdown_menu")
-						+nav_item("/profile") Profile
-						+nav_item("/") Logout
-						+nav_item_dropdown("#")(label = "Rooms")
-							+nav_item("#") Living Room
-							+nav_item("#") Bedroom
-							+nav_item("#") Bathroom 
+	.bs-example
+		table.table.table-hover
+			thead
+				tr
+					th #{heading[0]}
+					th #{heading[1]}
+					th #{heading[2]}
+					th #{heading[3]}                  
+			tbody
+				tr
+					each val,index in data_rfidTags
+						td #{val.tagId}      
+						td #{val.reference}
+						td #{val.location}
+						td #{val.readerId}
+						td
+							.button-delete
+								form.form-horizontal(id='new-tag-form', method='POST', action='/rfidtags')
+									input(type='hidden', name='_csrf', value=_csrf)
+									input(type='hidden', name='rfid_tag_id', value=val._id)
+									.form-group
+										button.btn.btn-danger(type='submit') Delete
 
-				.bs-example
-					table.table.table-hover
-						thead
-							tr
-								th #{heading[0]}
-								th #{heading[1]}
-								th #{heading[2]}
-								th #{heading[3]}                  
-						tbody
-							tr
-								each val,index in data_rfidTags
-									td #{val.tagId}      
-									td #{val.reference}
-									td #{val.location}
-									td #{val.readerId}
-									tr
+									// - input(value='Delete', type='submit')
+						td
+							.button-edit
+								form.form-horizontal(id='new-tag-form', method='POST', action='/rfidtags/edit_tag_form_in')
+									input(type='hidden', name='_csrf', value=_csrf)
+									input(type='hidden', name='rfid_tag_id', value=val._id)
+									.form-group
+											button.btn.btn-primary(type='submit') Edit 
+
+									// - input(value='Edit', type='submit')
+									// - a.btn.btn-default(role='submit') Edit
 
 
+						tr
+	.add_new_tag
+		a.btn.btn-default(href='/rfidtags/new_tag_form', role='button') Add New Tag »
