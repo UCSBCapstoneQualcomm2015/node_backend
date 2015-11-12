@@ -49,7 +49,7 @@ exports.getRfid_tags = function(req, res) {
 
 	var headings = ['Tag ID', 'Reference', 'Location', 'Reader ID'];
 	// Use the rfid_tags model to find all the rfid_tags
-	Rfid.find(function (err, rfid_tags) {
+	Rfid.find({userId: req.user._id},function (err, rfid_tags) {
 		if (err)
 			res.send(err);
 
