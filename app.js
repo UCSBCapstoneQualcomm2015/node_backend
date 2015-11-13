@@ -31,6 +31,7 @@ var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
 var rfidController = require('./controllers/rfid_tags');
 var roomController = require('./controllers/room');
+var snapController = require('./controllers/snapdragon');
 
 /**
  * API keys and Passport configuration.
@@ -133,6 +134,13 @@ app.get('/rooms', passportConf.isAuthenticated, roomController.get_rooms);
 app.post('/rooms', passportConf.isAuthenticated, roomController.delete_room);
 app.post('/rooms/edit_room_form_in', passportConf.isAuthenticated, roomController.get_edit_room_form);
 app.post('/rooms/edit_room_form', passportConf.isAuthenticated, roomController.edit_room);
+
+app.post('/snapdragons/new_snapdragon_form', passportConf.isAuthenticated, snapController.post_snapdragon);
+app.get('/snapdragons/new_snapdragon_form',passportConf.isAuthenticated, snapController.get_snapdragon_form);
+app.get('/snapdragons', passportConf.isAuthenticated, snapController.get_snapdragons);
+app.post('/snapdragons', passportConf.isAuthenticated, snapController.delete_snapdragon);
+app.post('/snapdragons/edit_snapdragon_form_in', passportConf.isAuthenticated, snapController.get_edit_snapdragon_form);
+app.post('/snapdragons/edit_snapdragon_form', passportConf.isAuthenticated, snapController.edit_snapdragon);
 
 
 
