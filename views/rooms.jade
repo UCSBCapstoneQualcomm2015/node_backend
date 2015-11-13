@@ -1,0 +1,42 @@
+extends layout
+
+block content
+
+	.bs-example
+		table.table.table-hover
+			thead
+				tr
+					th #{heading[0]}
+					th #{heading[1]}
+					th #{heading[2]}                
+			tbody
+				tr
+					each val,index in room_data
+						td #{val.name}      
+						td #{val.width}
+						td #{val.height}
+
+						td
+							.button-delete
+								form.form-horizontal(id='new-tag-form', method='POST', action='/rooms')
+									input(type='hidden', name='_csrf', value=_csrf)
+									input(type='hidden', name='room_id', value=val._id)
+									.form-group
+										button.btn.btn-danger(type='submit') Delete
+
+									// - input(value='Delete', type='submit')
+						td
+							.button-edit
+								form.form-horizontal(id='new-room-form', method='POST', action='/rooms/edit_room_form_in')
+									input(type='hidden', name='_csrf', value=_csrf)
+									input(type='hidden', name='room_id', value=val._id)
+									.form-group
+											button.btn.btn-primary(type='submit') Edit 
+
+									// - input(value='Edit', type='submit')
+									// - a.btn.btn-default(role='submit') Edit
+
+
+						tr
+	.add_new_tag
+		a.btn.btn-default(href='/rooms/new_room_form', role='button') Add New Tag »

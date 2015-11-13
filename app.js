@@ -30,6 +30,7 @@ var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
 var rfidController = require('./controllers/rfid_tags');
+var roomController = require('./controllers/room');
 
 /**
  * API keys and Passport configuration.
@@ -125,6 +126,14 @@ app.get('/rfidtags', passportConf.isAuthenticated, rfidController.getRfid_tags);
 app.post('/rfidtags', passportConf.isAuthenticated, rfidController.deleteRfid_tag);
 app.post('/rfidtags/edit_tag_form_in', passportConf.isAuthenticated, rfidController.getEdit_rfid_tag_form);
 app.post('/rfidtags/edit_tag_form', passportConf.isAuthenticated, rfidController.putRfid_tag);
+
+app.post('/rooms/new_room_form', passportConf.isAuthenticated, roomController.post_room);
+app.get('/rooms/new_room_form',passportConf.isAuthenticated, roomController.get_room_form);
+app.get('/rooms', passportConf.isAuthenticated, roomController.get_rooms);
+app.post('/rooms', passportConf.isAuthenticated, roomController.delete_room);
+app.post('/rooms/edit_room_form_in', passportConf.isAuthenticated, roomController.get_edit_room_form);
+app.post('/rooms/edit_room_form', passportConf.isAuthenticated, roomController.edit_room);
+
 
 
 /**
