@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+
+  h3 Edit Room Data
+  form.form-horizontal(id='new-tag-form', method='POST', action='/rooms/edit_room_form')
+    input(type='hidden', name='_csrf', value=_csrf)
+    input(type='hidden', name='room_id', value=room_data._id)
+    .form-group
+      label.col-sm-3.control-label(for='name') Name
+      .col-sm-7
+        input.form-control(type='text', name='name', id='name', value=room_data.name, autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='width') Width
+      .col-sm-7
+        input.form-control(type='text', name='width', id='width', value=room_data.width)
+    .form-group
+      label.col-sm-3.control-label(for='height') Height
+      .col-sm-7
+        input.form-control(type='text', name='height', id='height', value=room_data.height)
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.btn.btn-success(type='submit')
+          i.fa.fa-user-plus
+          | Edit Room

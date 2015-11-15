@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+
+  h3 Edit Room Data
+  form.form-horizontal(id='new-snapdragon-form', method='POST', action='/snapdragons/edit_snapdragon_form')
+    input(type='hidden', name='_csrf', value=_csrf)
+    input(type='hidden', name='snapdragon_id', value=snapdragon_data._id)
+    .form-group
+      label.col-sm-3.control-label(for='roomId') Room
+      .col-sm-7
+        input.form-control(type='text', name='roomId', id='roomId', value=snapdragon_data.roomId, autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='ipAddress') IP Address
+      .col-sm-7
+        input.form-control(type='text', name='ipAddress', id='ipAddress', value=snapdragon_data.ipAddress)
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.btn.btn-success(type='submit')
+          i.fa.fa-user-plus
+          | Edit Snap Dragon

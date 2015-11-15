@@ -1,0 +1,28 @@
+extends ../layout
+
+block content
+
+  h3 Enter New Tag Data
+  form.form-horizontal(id='new-tag-form', method='POST', action='/rfidtags/new_tag_form')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for='tagId') Tag ID
+      .col-sm-7
+        input.form-control(type='text', name='tagId', id='tagId', placeholder='Tag ID', autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='reference') Reference
+      .col-sm-7
+        input.form-control(type='text', name='reference', id='reference', placeholder='Reference')
+    .form-group
+      label.col-sm-3.control-label(for='location') Location
+      .col-sm-7
+        input.form-control(type='text', name='location', id='location', placeholder='Location')
+        .form-group
+      label.col-sm-3.control-label(for='readerId') Reader ID
+      .col-sm-7
+        input.form-control(type='text', name='readerId', id='readerId', placeholder='Reader ID')
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.btn.btn-success(type='submit')
+          i.fa.fa-user-plus
+          | Submit New Tag

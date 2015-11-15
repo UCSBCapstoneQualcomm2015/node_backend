@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+
+  h3 Edit Tag Data
+  form.form-horizontal(id='new-tag-form', method='POST', action='/rfidtags/edit_tag_form')
+    input(type='hidden', name='_csrf', value=_csrf)
+    input(type='hidden', name='rfid_tag_id', value=tag_data._id)
+    .form-group
+      label.col-sm-3.control-label(for='tagId') Tag ID
+      .col-sm-7
+        input.form-control(type='text', name='tagId', id='tagId', value=tag_data.tagId, autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='reference') Reference
+      .col-sm-7
+        input.form-control(type='text', name='reference', id='reference', value=tag_data.reference)
+    .form-group
+      label.col-sm-3.control-label(for='location') Location
+      .col-sm-7
+        input.form-control(type='text', name='location', id='location', value=tag_data.location)
+        .form-group
+      label.col-sm-3.control-label(for='readerId') Reader ID
+      .col-sm-7
+        input.form-control(type='text', name='readerId', id='readerId', value=tag_data.readerId)
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.btn.btn-success(type='submit')
+          i.fa.fa-user-plus
+          | Edit Tag

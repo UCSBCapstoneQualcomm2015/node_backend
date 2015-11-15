@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  h1 Sniffit Home Page
+  p.lead A radio frequency identifier application
+  hr
+  .row
+    .col-sm-6
+      h2 My Tagged Items
+      p View/create/edit all information about your lost items. Specify the correct radio frequency ID tag number attached to your item so that your snapdragons can query accordingly.
+      p
+        a.btn.btn-default(href='/rfidtags', role='button') View details »
+    .col-sm-6
+      h2 My Rooms
+      p View/create/edit all information about the rooms containing your lost items. Specify the dimensions of your room, and include the coordinates to all snapdragons and reference tags withing the room to increase the effieciency of the localizing algorithm.
+      p
+        a.btn.btn-default(href='/rooms', role='button') View details »
+    .col-sm-6
+      h2 My RFID Readers
+      p View/create/edit all information about the snapdragons/RFIDReaders that will be used to locate your lost items. Specify the room containing the snapdragon, as well as the snapdragon's IP address for means of communication.
+      p
+        a.btn.btn-default(href='/snapdragons', role='button') View details »

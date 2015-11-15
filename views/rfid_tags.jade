@@ -1,0 +1,43 @@
+extends layout
+
+block content
+
+	.bs-example
+		table.table.table-hover
+			thead
+				tr
+					th #{heading[0]}
+					th #{heading[1]}
+					th #{heading[2]}
+					th #{heading[3]}                  
+			tbody
+				tr
+					each val,index in data_rfidTags
+						td #{val.tagId}      
+						td #{val.reference}
+						td #{val.location}
+						td #{val.readerId}
+						td
+							.button-delete
+								form.form-horizontal(id='new-tag-form', method='POST', action='/rfidtags')
+									input(type='hidden', name='_csrf', value=_csrf)
+									input(type='hidden', name='rfid_tag_id', value=val._id)
+									.form-group
+										button.btn.btn-danger(type='submit') Delete
+
+									// - input(value='Delete', type='submit')
+						td
+							.button-edit
+								form.form-horizontal(id='new-tag-form', method='POST', action='/rfidtags/edit_tag_form_in')
+									input(type='hidden', name='_csrf', value=_csrf)
+									input(type='hidden', name='rfid_tag_id', value=val._id)
+									.form-group
+											button.btn.btn-primary(type='submit') Edit 
+
+									// - input(value='Edit', type='submit')
+									// - a.btn.btn-default(role='submit') Edit
+
+
+						tr
+	.add_new_tag
+		a.btn.btn-default(href='/rfidtags/new_tag_form', role='button') Add New Tag »
