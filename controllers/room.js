@@ -50,7 +50,7 @@ exports.get_rooms = function(req, res) {
 	Room.find({userId: req.user._id},function (err, rooms) {
 		if (err)
 			res.send(err);
-
+		console.log(rooms);
 		//res.json(rfid_tags);
 		res.render('rooms', {
 			room_data : rooms,

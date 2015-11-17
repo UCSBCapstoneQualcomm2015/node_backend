@@ -83,7 +83,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 app.use(lusca({
-  csrf: true,
+  csrf: false,
   xframe: 'SAMEORIGIN',
   xssProtection: true
 }));
@@ -142,8 +142,8 @@ app.post('/snapdragons', passportConf.isAuthenticated, snapController.delete_sna
 app.post('/snapdragons/edit_snapdragon_form_in', passportConf.isAuthenticated, snapController.get_edit_snapdragon_form);
 app.post('/snapdragons/edit_snapdragon_form', passportConf.isAuthenticated, snapController.edit_snapdragon);
 
-
-
+app.get('/find', passportConf.isAuthenticated, homeController.getFind);
+app.post('/find', passportConf.isAuthenticated, homeController.postFind);
 /**
  * API examples routes.
  */
