@@ -1,5 +1,6 @@
 // Load the required packages 
 var SnapDragon = require('../models/SnapDragon');
+var Room = require('../models/Room');
 
 // Create endpoint /api/rfid_tags for GET 
 exports.get_snapdragons = function(req, res) {
@@ -78,13 +79,13 @@ exports.edit_snapdragon = function(req, res) {
 			res.send(err);
 
 		// Update the existing location (can modify to add anything)
-		snapdragon.roomId = req.body.name;
-		snapdragon.ipAddress = req.body.height;
+		snapdragon.roomId = req.body.roomId;
+		snapdragon.ipAddress = req.body.ipAddress;
 
 
 
 		// Save the rfid_tag and check for errors
-		room.save(function(err) {
+		snapdragon.save(function(err) {
 			if (err)
 				res.send(err);
 			res.redirect('/snapdragons');

@@ -8,15 +8,13 @@ block content
 				tr
 					th #{heading[0]}
 					th #{heading[1]}
-					th #{heading[2]}
-					th #{heading[3]}                  
+					th #{heading[2]}                
 			tbody
 				tr
 					each val,index in data_rfidTags
 						td #{val.tagId}      
-						td #{val.reference}
-						td #{val.location}
-						td #{val.readerId}
+						td #{val.name}
+						td #{val.lastSeen}
 						td
 							.button-delete
 								form.form-horizontal(id='new-tag-form', method='POST', action='/rfidtags')
