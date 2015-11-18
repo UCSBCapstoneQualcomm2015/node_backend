@@ -3,8 +3,13 @@ var async = require('async');
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 var passport = require('passport');
+var jwt = require('jsonwebtoken');
+
+
+
 var User = require('../models/User');
 var secrets = require('../config/secrets');
+
 
 /**
  * GET /login
@@ -42,6 +47,38 @@ exports.postLogin = function(req, res, next) {
       if (err) return next(err);
       req.flash('success', { msg: 'Success! You are logged in.' });
       res.redirect(req.session.returnTo || '/');
+    });
+  })(req, res, next);
+};
+
+
+// POST /api/login
+//
+//
+exports.post_login_api = function(req, res, next) {
+  req.assert('email', 'Email is not valid').isEmail();
+  req.assert('password', 'Password cannot be blank').notEmpty();
+
+  var errors = req.validationErrors();
+  if (errors) {
+    return res.json({message: errors});
+  }
+  passport.authenticate('local', function(err, user, info) {
+    if (err) return next(err);
+    if (!user) {
+      return res.json({success: false, message: info.message});
+    }
+    req.logIn(user, function(err) {
+      if (err) return next(err);
+      // If the correct user is found then create the token
+      var token = jwt.sign(user, app.get('tokenSecret'), {
+        expiresInMinutes: 120 // 2 hours limit
+      });
+      return res.json({
+        message: 'Success! You are logged in.',
+        success: true,
+        token: token
+      });
     });
   })(req, res, next);
 };
@@ -101,6 +138,40 @@ exports.postSignup = function(req, res, next) {
     });
   });
 };
+
+// POST /signup
+// For API
+exports.post_signup_api = function(req, res, next) {
+  req.assert('email', 'Email is not valid').isEmail();
+  req.assert('password', 'Password must be at least 4 characters long').len(4);
+  //req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+
+  var errors = req.validationErrors();
+  if (errors) {
+    return res.json({message: errors});
+  }
+
+  var user = new User({
+    email: req.body.email,
+    password: req.body.password
+  });
+
+  User.findOne({ email: req.body.email} , function(err, existingUser) {
+    if (existingUser) {
+      return res.json({ message:'Account with that email address already exists.'});
+
+    }
+    user.save(function(err) {
+      if (err) return next(err);
+      req.logIn(user, function(err) {
+        if (err) return next(err);
+        return res.json({message: 'Successful sign up.'});
+      });
+    });
+  });
+};
+
+
 
 /**
  * GET /account
@@ -264,8 +335,8 @@ exports.postReset = function(req, res, next) {
       });
       var mailOptions = {
         to: user.email,
-        from: 'hackathon@starter.com',
-        subject: 'Your Hackathon Starter password has been changed',
+        from: 'sniffit@gmail.com',
+        subject: 'Your Sniffit password has been changed',
         text: 'Hello,\n\n' +
           'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
       };
@@ -339,8 +410,8 @@ exports.postForgot = function(req, res, next) {
       });
       var mailOptions = {
         to: user.email,
-        from: 'hackathon@starter.com',
-        subject: 'Reset your password on Hackathon Starter',
+        from: 'sniffit@gmail.com',
+        subject: 'Reset your password on Sniffit',
         text: 'You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n' +
           'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
           'http://' + req.headers.host + '/reset/' + token + '\n\n' +
