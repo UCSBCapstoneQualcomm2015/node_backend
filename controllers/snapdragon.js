@@ -1,5 +1,6 @@
 // Load the required packages 
 var SnapDragon = require('../models/SnapDragon');
+var Room = require('../models/Room');
 
 
 // Controllers for the web app endpoints 
@@ -160,11 +161,15 @@ exports.edit_snapdragon_api = function(req, res) {
 		if (err)
 			res.send(err);
 
-		// Update the existing data (can modify to add anything)
-		snapdragon.roomId = req.body.name;
-		snapdragon.ipAddress = req.body.height;
 
-		// Save the new data and check for errors
+		// Update the existing location (can modify to add anything)
+		snapdragon.roomId = req.body.roomId;
+		snapdragon.ipAddress = req.body.ipAddress;
+
+
+
+		// Save the rfid_tag and check for errors
+
 		snapdragon.save(function(err) {
 			if (err)
 				res.send(err);
