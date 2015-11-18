@@ -11,6 +11,7 @@ var logger = require('morgan');
 var errorHandler = require('errorhandler');
 var lusca = require('lusca');
 var methodOverride = require('method-override');
+var jwt = require('jsonwebtoken');
 
 var _ = require('lodash');
 var MongoStore = require('connect-mongo')(session);
@@ -20,6 +21,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var expressValidator = require('express-validator');
 var sass = require('node-sass-middleware');
+
 
 
 /**
@@ -120,7 +122,7 @@ app.post('/account/delete', passportConf.isAuthenticated, userController.postDel
 app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
 
 
-
+// Our Web App routes
 app.post('/rfidtags/new_tag_form', passportConf.isAuthenticated, rfidController.postRfid_tags);
 app.get('/rfidtags/new_tag_form',passportConf.isAuthenticated, rfidController.getRfid_Tag_form);
 app.get('/rfidtags', passportConf.isAuthenticated, rfidController.getRfid_tags);
@@ -142,8 +144,39 @@ app.post('/snapdragons', passportConf.isAuthenticated, snapController.delete_sna
 app.post('/snapdragons/edit_snapdragon_form_in', passportConf.isAuthenticated, snapController.get_edit_snapdragon_form);
 app.post('/snapdragons/edit_snapdragon_form', passportConf.isAuthenticated, snapController.edit_snapdragon);
 
+
 app.get('/find', passportConf.isAuthenticated, homeController.getFind);
 app.post('/find', passportConf.isAuthenticated, homeController.postFind);
+
+
+
+// Our API routes
+//      User Authentification
+app.post('/api/login', userController.post_login_api);
+app.post('/api/signup', userController.post_signup_api);
+//      RFID Tags 
+app.get('/api/user/:user_id/rfidtags/', passportConf.isAuthenticated, rfidController.get_RFID_tags);
+app.get('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.isAuthenticated, rfidController.get_RFID_tag);
+app.post('/api/user/:user_id/rfidtags', passportConf.isAuthenticated, rfidController.post_RFID_tag);
+app.put('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.isAuthenticated, rfidController.put_RFID_tag);
+app.delete('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.isAuthenticated, rfidController.delete_RFID_tag);
+//      Rooms
+app.get('/api/user/:user_id/rooms', passportConf.isAuthenticated, roomController.get_rooms_api);
+app.get('/api/user/:user_id/rooms/:room_id', passportConf.isAuthenticated, roomController.get_room_api);
+app.post('/api/user/:user_id/rooms', passportConf.isAuthenticated, roomController.post_room_api);
+app.put('/api/user/:user_id/rooms/:room_id', passportConf.isAuthenticated, roomController.edit_room_api);
+app.delete('/api/user/:user_id/rooms/:room_id', passportConf.isAuthenticated, roomController.delete_room_api);
+//      Snapdragon
+app.get('/api/user/:user_id/snapdragons', passportConf.isAuthenticated, snapController.get_snapdragons_api);
+app.get('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.isAuthenticated, snapController.get_snapdragon_api);
+app.post('/api/user/:user_id/snapdragons', passportConf.isAuthenticated, snapController.post_snapdragon_api);
+app.put('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.isAuthenticated, snapController.edit_snapdragon_api);
+app.delete('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.isAuthenticated, snapController.delete_snapdragon_api);
+//      User Accounts
+
+
+
+
 /**
  * API examples routes.
  */
