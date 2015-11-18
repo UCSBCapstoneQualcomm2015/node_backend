@@ -5,9 +5,9 @@ var mongoose = require('mongoose');
 var RfidSchema = new mongoose.Schema({
 	userId: String,
 	tagId: String,
-	name: String,
-	lastSeen: { type: String, default: "Item not seen yet" },
-	allSeen: [String]
+	readerId: String,
+	location: String,
+	reference: Boolean
 });
 
 // Export the Mongoose model

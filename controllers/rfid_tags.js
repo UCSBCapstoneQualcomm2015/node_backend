@@ -25,11 +25,13 @@ exports.postRfid_tags = function(req, res) {
 
 	// Create new instance of the RFID_tag model
 	var rfid_tags = new Rfid();
-	var headings = ['Tag ID', 'Name', 'Location Last Seen'];
+	var headings = ['Tag ID', 'Reference', 'Location', 'Reader ID'];
 
 	// Set the rfid_tags properties from POST data
 	rfid_tags.tagId = req.body.tagId;
-	rfid_tags.name = req.body.name;
+	rfid_tags.readerId = req.body.readerId;
+	rfid_tags.location = req.body.location;
+	rfid_tags.reference = req.body.reference;
 	rfid_tags.userId = req.user._id;
 
 	// Save the RFID tag info and check for errors
@@ -45,7 +47,7 @@ exports.postRfid_tags = function(req, res) {
 // Create endpoint /api/rfid_tags for GET 
 exports.getRfid_tags = function(req, res) {
 
-	var headings = ['Tag ID', 'Name', 'Location Last Seen'];
+	var headings = ['Tag ID', 'Reference', 'Location', 'Reader ID'];
 	// Use the rfid_tags model to find all the rfid_tags
 	Rfid.find({userId: req.user._id},function (err, rfid_tags) {
 		if (err)
@@ -80,7 +82,9 @@ exports.putRfid_tag = function(req, res) {
 
 		// Update the existing location (can modify to add anything)
 		rfid_tag.tagId = req.body.tagId;
-		rfid_tag.name = req.body.name;
+		rfid_tag.location = req.body.location;
+		rfid_tag.reference = req.body.reference;
+		rfid_tag.readerId = req.body.readerId;
 
 		// Save the rfid_tag and check for errors
 		rfid_tag.save(function(err) {

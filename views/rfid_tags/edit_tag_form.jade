@@ -11,9 +11,17 @@ block content
       .col-sm-7
         input.form-control(type='text', name='tagId', id='tagId', value=tag_data.tagId, autofocus)
     .form-group
-      label.col-sm-3.control-label(for='name') Name
+      label.col-sm-3.control-label(for='reference') Reference
       .col-sm-7
-        input.form-control(type='text', name='name', id='name', value=tag_data.name)
+        input.form-control(type='text', name='reference', id='reference', value=tag_data.reference)
+    .form-group
+      label.col-sm-3.control-label(for='location') Location
+      .col-sm-7
+        input.form-control(type='text', name='location', id='location', value=tag_data.location)
+        .form-group
+      label.col-sm-3.control-label(for='readerId') Reader ID
+      .col-sm-7
+        input.form-control(type='text', name='readerId', id='readerId', value=tag_data.readerId)
     .form-group
       .col-sm-offset-3.col-sm-7
         button.btn.btn-success(type='submit')
