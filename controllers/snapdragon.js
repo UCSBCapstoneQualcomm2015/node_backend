@@ -125,7 +125,7 @@ exports.get_snapdragons_api = function(req, res) {
 
 // Controller to GET a specific Snapdragon data
 exports.get_snapdragon_api = function(req, res) {
-	Snapdragon.findById(req.body.snapdragon_id, function(err, snapdragon) {
+	SnapDragon.findById(req.params.snapdragon_id, function(err, snapdragon) {
 		if (err)
 			res.send(err);
 		res.json(snapdragon);
