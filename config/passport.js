@@ -9,6 +9,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 var OAuthStrategy = require('passport-oauth').OAuthStrategy;
 var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
+var jwt = require('jsonwebtoken');
 
 var secrets = require('./secrets');
 var User = require('../models/User');
@@ -408,10 +409,10 @@ exports.isAuthenticated = function(req, res, next) {
 };
 
 // Login Required middleware for API.
-exports.is_Authenticated_API = function(req, res, next) {
-  var token = req.body.token || req.query.token || req.header['x-access-token'];
+exports.is_authenticated_api = function(req, res, next) {
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
   if (token) {
-    jwt.verify(token, app.get('tokenSecret'), function(err, decoded) {
+    jwt.verify(token, secrets.tokenSecret, function(err, decoded) {
       if (err) {
         return res.json({
           success: false, 

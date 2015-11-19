@@ -71,13 +71,14 @@ exports.post_login_api = function(req, res, next) {
     req.logIn(user, function(err) {
       if (err) return next(err);
       // If the correct user is found then create the token
-      var token = jwt.sign(user, app.get('tokenSecret'), {
-        expiresInMinutes: 120 // 2 hours limit
+      var token = jwt.sign(user, secrets.tokenSecret, {
+        expiresIn: 12000 // 2 hours limit
       });
-      return res.json({
+      res.json({
         message: 'Success! You are logged in.',
         success: true,
-        token: token
+        token: token,
+        user_id: user._id
       });
     });
   })(req, res, next);

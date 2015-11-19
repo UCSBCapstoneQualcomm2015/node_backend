@@ -84,9 +84,9 @@ exports.putRfid_tag = function(req, res) {
 
 		// Update the existing location (can modify to add anything)
 		rfid_tag.tagId = req.body.tagId;
-		rfid_tag.location = req.body.location;
-		rfid_tag.reference = req.body.reference;
-		rfid_tag.readerId = req.body.readerId;
+		rfid_tag.name = req.body.name;
+		//rfid_tag.reference = req.body.reference;
+		//rfid_tag.readerId = req.body.readerId;
 
 		// Save the rfid_tag and check for errors
 		rfid_tag.save(function(err) {
@@ -148,9 +148,10 @@ exports.post_RFID_tag = function(req, res) {
 	var rfid_tags = new Rfid();
 	// Set the rfid_tags properties from POST data
 	rfid_tags.tagId = req.body.tagId;
-	rfid_tags.readerId = req.body.readerId;
-	rfid_tags.location = req.body.location;
-	rfid_tags.reference = req.body.reference;
+	rfid_tags.name = req.body.name; 
+	//rfid_tags.readerId = req.body.readerId;
+	//rfid_tags.location = req.body.location;
+	//rfid_tags.reference = req.body.reference;
 	rfid_tags.userId = req.user._id;
 
 	rfid_tags.save(function(err) {
@@ -191,7 +192,9 @@ exports.delete_RFID_tag = function(req,res) {
 			console.log('There is an error');
 			res.send(err);
 		}
-		res.redirect({message: 'Tag Deleted'});
+		res.json({
+			message: 'Tag Deleted'
+		});
 	});
 };
 

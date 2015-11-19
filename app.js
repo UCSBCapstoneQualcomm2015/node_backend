@@ -61,6 +61,7 @@ mongoose.connection.on('error', function() {
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.set('tokenSecret', secrets);
 app.use(compress());
 app.use(sass({
   src: path.join(__dirname, 'public'),
@@ -155,23 +156,23 @@ app.post('/find', passportConf.isAuthenticated, homeController.postFind);
 app.post('/api/login', userController.post_login_api);
 app.post('/api/signup', userController.post_signup_api);
 //      RFID Tags 
-app.get('/api/user/:user_id/rfidtags/', passportConf.isAuthenticated, rfidController.get_RFID_tags);
-app.get('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.isAuthenticated, rfidController.get_RFID_tag);
-app.post('/api/user/:user_id/rfidtags', passportConf.isAuthenticated, rfidController.post_RFID_tag);
-app.put('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.isAuthenticated, rfidController.put_RFID_tag);
-app.delete('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.isAuthenticated, rfidController.delete_RFID_tag);
+app.get('/api/user/:user_id/rfidtags/', passportConf.is_authenticated_api, rfidController.get_RFID_tags);
+app.get('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.is_authenticated_api, rfidController.get_RFID_tag);
+app.post('/api/user/:user_id/rfidtags', passportConf.is_authenticated_api, rfidController.post_RFID_tag);
+app.put('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.is_authenticated_api, rfidController.put_RFID_tag);
+app.delete('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.is_authenticated_api, rfidController.delete_RFID_tag);
 //      Rooms
-app.get('/api/user/:user_id/rooms', passportConf.isAuthenticated, roomController.get_rooms_api);
-app.get('/api/user/:user_id/rooms/:room_id', passportConf.isAuthenticated, roomController.get_room_api);
-app.post('/api/user/:user_id/rooms', passportConf.isAuthenticated, roomController.post_room_api);
-app.put('/api/user/:user_id/rooms/:room_id', passportConf.isAuthenticated, roomController.edit_room_api);
-app.delete('/api/user/:user_id/rooms/:room_id', passportConf.isAuthenticated, roomController.delete_room_api);
+app.get('/api/user/:user_id/rooms', passportConf.is_authenticated_api, roomController.get_rooms_api);
+app.get('/api/user/:user_id/rooms/:room_id', passportConf.is_authenticated_api, roomController.get_room_api);
+app.post('/api/user/:user_id/rooms', passportConf.is_authenticated_api, roomController.post_room_api);
+app.put('/api/user/:user_id/rooms/:room_id', passportConf.is_authenticated_api, roomController.edit_room_api);
+app.delete('/api/user/:user_id/rooms/:room_id', passportConf.is_authenticated_api, roomController.delete_room_api);
 //      Snapdragon
-app.get('/api/user/:user_id/snapdragons', passportConf.isAuthenticated, snapController.get_snapdragons_api);
-app.get('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.isAuthenticated, snapController.get_snapdragon_api);
-app.post('/api/user/:user_id/snapdragons', passportConf.isAuthenticated, snapController.post_snapdragon_api);
-app.put('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.isAuthenticated, snapController.edit_snapdragon_api);
-app.delete('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.isAuthenticated, snapController.delete_snapdragon_api);
+app.get('/api/user/:user_id/snapdragons', passportConf.is_authenticated_api, snapController.get_snapdragons_api);
+app.get('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.is_authenticated_api, snapController.get_snapdragon_api);
+app.post('/api/user/:user_id/snapdragons', passportConf.is_authenticated_api, snapController.post_snapdragon_api);
+app.put('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.is_authenticated_api, snapController.edit_snapdragon_api);
+app.delete('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.is_authenticated_api, snapController.delete_snapdragon_api);
 //      User Accounts
 
 
