@@ -42,6 +42,7 @@ exports.post_room = function(req, res) {
 	// Set the room properties from request data
 	rooms.name = req.body.name;
 	rooms.height = req.body.height;
+	rooms.length = req.body.length;
 	rooms.width = req.body.width;
 	rooms.userId = req.user._id;
 
@@ -84,6 +85,7 @@ exports.edit_room = function(req, res) {
 		// Update the existing information (can modify to add anything)
 		room.name = req.body.name;
 		room.height = req.body.height;
+		room.length = req.body.length;
 		room.width = req.body.width;
 
 
@@ -139,7 +141,7 @@ exports.get_rooms_api = function(req, res) {
 
 // Controller to GET a specific room
 exports.get_room_api = function(req,res) {
-	Room.findById(req.body.room_id, function(err, room) {
+	Room.findById(req.params.room_id, function(err, room) {
 		if (err)
 			res.send(err);
 		res.json(room);
@@ -157,6 +159,7 @@ exports.post_room_api = function(req, res) {
 	rooms.name = req.body.name;
 	rooms.height = req.body.height;
 	rooms.width = req.body.width;
+	rooms.length = req.body.length;
 	rooms.userId = req.user._id;
 
 	// Save the room info and check for errors
@@ -179,6 +182,7 @@ exports.edit_room_api = function(req, res) {
 		// Update the existing information (can modify to add anything)
 		room.name = req.body.name;
 		room.height = req.body.height;
+		room.length = req.body.length;
 		room.width = req.body.width;
 
 

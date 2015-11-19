@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var RoomSchema = new mongoose.Schema({
 	userId: String,
 	height: String,
+	length: String,
 	width: String,
 	name: String
 });
