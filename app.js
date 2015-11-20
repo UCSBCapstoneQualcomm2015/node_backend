@@ -157,10 +157,10 @@ app.post('/api/login', userController.post_login_api);
 app.post('/api/signup', userController.post_signup_api);
 //      RFID Tags 
 app.get('/api/user/:user_id/rfidtags/', passportConf.is_authenticated_api, rfidController.get_RFID_tags);
-app.get('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.is_authenticated_api, rfidController.get_RFID_tag);
+app.get('/api/user/:user_id/rfidtags/:rfid_tagId', passportConf.is_authenticated_api, rfidController.get_RFID_tag);
 app.post('/api/user/:user_id/rfidtags', passportConf.is_authenticated_api, rfidController.post_RFID_tag);
-app.put('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.is_authenticated_api, rfidController.put_RFID_tag);
-app.delete('/api/user/:user_id/rfidtags/:rfid_tag_id', passportConf.is_authenticated_api, rfidController.delete_RFID_tag);
+app.put('/api/user/:user_id/rfidtags/:rfid_tagId', passportConf.is_authenticated_api, rfidController.put_RFID_tag);
+app.delete('/api/user/:user_id/rfidtags/:rfid_tagId', passportConf.is_authenticated_api, rfidController.delete_RFID_tag);
 //      Rooms
 app.get('/api/user/:user_id/rooms', passportConf.is_authenticated_api, roomController.get_rooms_api);
 app.get('/api/user/:user_id/rooms/:room_id', passportConf.is_authenticated_api, roomController.get_room_api);
