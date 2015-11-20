@@ -122,7 +122,7 @@ exports.deleteRfid_tag = function(req,res) {
 // - put_RFID_tag 		- /api/rfidtags
 // - delete_RFID_tag 	- /api/rfidtags
 
-// Controller to GET all RFID tag data
+// Controller to GET all RFID tags '/api/user/:user_id/rfidtags/',
 exports.get_RFID_tags = function(req, res) {
 	// Find all the tags associated with current user
 	Rfid.find({ userId: req.params.user_id}, function(err,rfid_tags) {
@@ -132,9 +132,9 @@ exports.get_RFID_tags = function(req, res) {
 	});
 };
 
-// Controller to GET specific id using /api/rfidtag/:_id
+// Controller to GET specific id using '/api/user/:user_id/rfidtags/:rfid_tag_id'
 exports.get_RFID_tag = function(req, res) {
-	// Use the rfid_tags model to get a specific rfid_tag
+	// Find tags that match the user id and tag id
 	Rfid.find({$and: [
 			{userId: req.params.user_id},
 		 	{_id: req.params.rfid_tag_id}
@@ -155,7 +155,7 @@ exports.post_RFID_tag = function(req, res) {
 	//rfid_tags.readerId = req.body.readerId;
 	//rfid_tags.location = req.body.location;
 	//rfid_tags.reference = req.body.reference;
-	rfid_tags.userId = req.user._id;
+	rfid_tags.userId = req.params.user_id;
 
 	rfid_tags.save(function(err) {
 		if (err)
