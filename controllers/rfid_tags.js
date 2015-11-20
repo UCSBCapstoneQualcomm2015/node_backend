@@ -125,7 +125,7 @@ exports.deleteRfid_tag = function(req,res) {
 // Controller to GET all RFID tag data
 exports.get_RFID_tags = function(req, res) {
 	// Find all the tags associated with current user
-	Rfid.find({ userId: req.user._id}, function(err,rfid_tags) {
+	Rfid.find({ userId: req.params.user_id}, function(err,rfid_tags) {
 		if (err)
 			res.send(err);
 		res.json(rfid_tags);
@@ -135,7 +135,10 @@ exports.get_RFID_tags = function(req, res) {
 // Controller to GET specific id using /api/rfidtag/:_id
 exports.get_RFID_tag = function(req, res) {
 	// Use the rfid_tags model to get a specific rfid_tag
-	Rfid.findById(req.params.rfid_tag_id, function (err, rfid_tag) {
+	Rfid.find({$and: [
+			{userId: req.params.user_id},
+		 	{_id: req.params.rfid_tag_id}
+		 ]}, function (err, rfid_tag) {
 		if (err)
 			res.send(err);
 		res.json(rfid_tag);
