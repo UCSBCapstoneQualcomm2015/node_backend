@@ -58,7 +58,7 @@ mongoose.connection.on('error', function() {
 /**
  * Express configuration.
  */
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 8080);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.set('tokenSecret', secrets);
@@ -163,16 +163,16 @@ app.put('/api/user/:user_id/rfidtags/:rfid_tagId', passportConf.is_authenticated
 app.delete('/api/user/:user_id/rfidtags/:rfid_tagId', passportConf.is_authenticated_api, rfidController.delete_RFID_tag);
 //      Rooms
 app.get('/api/user/:user_id/rooms', passportConf.is_authenticated_api, roomController.get_rooms_api);
-app.get('/api/user/:user_id/rooms/:room_id', passportConf.is_authenticated_api, roomController.get_room_api);
+app.get('/api/user/:user_id/rooms/:room_name', passportConf.is_authenticated_api, roomController.get_room_api);
 app.post('/api/user/:user_id/rooms', passportConf.is_authenticated_api, roomController.post_room_api);
-app.put('/api/user/:user_id/rooms/:room_id', passportConf.is_authenticated_api, roomController.edit_room_api);
-app.delete('/api/user/:user_id/rooms/:room_id', passportConf.is_authenticated_api, roomController.delete_room_api);
+app.put('/api/user/:user_id/rooms/:room_name', passportConf.is_authenticated_api, roomController.edit_room_api);
+app.delete('/api/user/:user_id/rooms/:room_name', passportConf.is_authenticated_api, roomController.delete_room_api);
 //      Snapdragon
 app.get('/api/user/:user_id/snapdragons', passportConf.is_authenticated_api, snapController.get_snapdragons_api);
-app.get('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.is_authenticated_api, snapController.get_snapdragon_api);
+app.get('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.get_snapdragon_api);
 app.post('/api/user/:user_id/snapdragons', passportConf.is_authenticated_api, snapController.post_snapdragon_api);
-app.put('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.is_authenticated_api, snapController.edit_snapdragon_api);
-app.delete('/api/user/:user_id/snapdragons/:snapdragon_id', passportConf.is_authenticated_api, snapController.delete_snapdragon_api);
+app.put('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.edit_snapdragon_api);
+app.delete('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.delete_snapdragon_api);
 
 
 

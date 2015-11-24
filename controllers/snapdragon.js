@@ -115,17 +115,19 @@ exports.delete_snapdragon = function(req,res) {
 exports.get_snapdragons_api = function(req, res) {
 	var headings = ['Room', 'IP Address'];
 	// Use the Snapdragon model to find all the rfid_tags
-	SnapDragon.find({userId: req.user._id},function (err, snapdragons) {
+	SnapDragon.find({userId: req.params.user_id},function (err, snapdragons) {
 		if (err)
 			res.send(err);
-
 		res.json(snapdragons);
 	});
 };
 
 // Controller to GET a specific Snapdragon data
 exports.get_snapdragon_api = function(req, res) {
-	SnapDragon.findById(req.params.snapdragon_id, function(err, snapdragon) {
+	SnapDragon.find({$and: 
+		[{userId: req.params.user_id},
+		{ipAddress: req.params.snapdragon_ip}]}, 
+		function(err, snapdragon) {
 		if (err)
 			res.send(err);
 		res.json(snapdragon);
@@ -134,59 +136,74 @@ exports.get_snapdragon_api = function(req, res) {
 
 // Controller to POST a new Snapdragon module
 exports.post_snapdragon_api = function(req, res) {
-
 	// Create new instance of the Snapdragon model
 	var snapdragons = new SnapDragon();
 	var headings = ['Room Id', 'IP Address'];
 
-	// Set the Snapdragon properties from POST data
-	snapdragons.roomId = req.body.roomId;
-	snapdragons.ipAddress = req.body.ipAddress;
-	snapdragons.userId = req.user._id;
-
-
-	// Save the Snapdragon info and check for errors
-	snapdragons.save(function(err) {
-		if (err)
-			res.send(err);
+	SnapDragon.count({$and:
+		[{userId: req.params.user_id},
+		{ipAddress: req.params.snapdragon_ip}]},
+		function (err, count){ 
+	    if(count>0){
+	    	res.json({message: 'SnapDragon already exists'}); 
+	    	return;
+	    }else{
+	    	// Set the Snapdragon properties from POST data
+	    	snapdragons.roomId = req.body.roomId;
+	    	snapdragons.ipAddress = req.body.ipAddress;
+	    	snapdragons.userId = req.user._id;
+	    	snapdragons.save(function(err) {
+		    	if (err){
+		    		res.send(err);
+		    		return;
+		    	}
+	    	});
+	    	res.json({message: 'New Snapdragon registered!', data: snapdragons});	
+		}
 	});
+}	
 
-	res.json({message: 'New Snapdragon registered!', data: snapdragons});
-};
 
 // Controller to PUT (edit) the data of a specific Snapdragon module
 exports.edit_snapdragon_api = function(req, res) {
-	// Use the Snapdragon model to modify data
-	SnapDragon.findById(req.body.snapdragon_id, function(err, snapdragon) {
-		if (err)
-			res.send(err);
-
-
-		// Update the existing location (can modify to add anything)
-		snapdragon.roomId = req.body.roomId;
-		snapdragon.ipAddress = req.body.ipAddress;
-
-
-
-		// Save the rfid_tag and check for errors
-
-		snapdragon.save(function(err) {
-			if (err)
-				res.send(err);
-			res.json({message: 'Updated Snapdragon data!', data: snapdragon});
-		});
-	});
-};
+	SnapDragon.count({$and:
+		[{userId: req.params.user_id},
+		{ipAddress: req.body.ipAddress}]}, function (err, count){ 
+	    if(count>0){
+	    	res.json({message: 'SnapDragon already exists'}); 
+	    	return;
+	    }else{
+			SnapDragon.update({$and: 
+			[{userId: req.params.user_id},
+			{ipAddress: req.params.snapdragon_ip}]}, 
+			{
+				roomId: req.body.roomId,
+				ipAddress: req.body.ipAddress
+			},
+			function(err, snapdragon) {
+				if (err){
+					res.send(err);
+					return;
+				}
+				res.json({message: 'Updated SnapDragon information', data: snapdragon});
+			});
+		}
+	});	
+}
 
 // Controller to DELETE a Snapdragon module from database
 exports.delete_snapdragon_api = function(req,res) {
 	// Use the ID to delete a specific Snapdragon
-	SnapDragon.remove({ _id: req.body.snapdragon_id}, function(err) {
-		
+	console.log('Tag Deleted: ' + req.params.snapdragon_ip);
+	SnapDragon.remove({$and: 
+		[{userId: req.params.user_id},
+		{ipAddress: req.params.snapdragon_ip}]}, function(err) {
 		if (err) {
 			console.log('There is an error');
 			res.send(err);
 		}
 		res.json({message: 'Deleted Snapdragon.'});
 	});
-};
+}
+
+

@@ -150,7 +150,10 @@ exports.get_RFID_tag = function(req, res) {
 exports.post_RFID_tag = function(req, res) {
 	var rfid_tags = new Rfid();
 	// Set the rfid_tags properties from POST data
-	Rfid.count({tagId: req.body.tagId}, function (err, count){ 
+	Rfid.count({$and:
+		[{userId: req.params.user_id},
+		{tagId: req.body.tagId}]},
+		function (err, count){ 
 	    if(count>0){
 	    	res.json({message: 'Tag already exists'}); 
 	    	return;
@@ -172,14 +175,17 @@ exports.post_RFID_tag = function(req, res) {
 
 // Controller to PUT a specific RFID tag ('/api/user/:user_id/rfidtags/:rfid_tagId')
 exports.put_RFID_tag = function(req, res) {
-	Rfid.count({tagId: req.body.tagId}, function (err, count){ 
+	Rfid.count({$and:
+		[{userId: req.params.user_id},
+		{tagId: req.body.tagId}]}, function (err, count){ 
 	    if(count>0){
 	    	res.json({message: 'Tag already exists'}); 
 	    	return;
 	    }else{
 			Rfid.update({$and: 
 			[{userId: req.params.user_id},
-			{tagId: req.params.rfid_tag_id}]}, {
+			{tagId: req.params.rfid_tagId}]}, 
+			{
 				tagId: req.body.tagId,
 				name: req.body.name
 			},
@@ -188,7 +194,7 @@ exports.put_RFID_tag = function(req, res) {
 					res.send(err);
 					return;
 				}
-				res.json({message: 'Updated tag information'});
+				res.json({message: 'Updated tag information', data: rfid_tag});
 			});
 		}
 	});	
@@ -198,7 +204,6 @@ exports.put_RFID_tag = function(req, res) {
 // Controller to delete a specific tag
 exports.delete_RFID_tag = function(req,res) {
 	// Use the ID to delete a specific rfid_tag
-	console.log('Tag Deleted: ' + req.body.rfid_tag_id);
 	Rfid.remove({$and: 
 		[{userId: req.params.user_id},
 		{tagId: req.params.rfid_tagId}]}, function(err) {

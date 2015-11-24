@@ -4,7 +4,6 @@ var mongoose = require('mongoose');
 // Create the schema for RFID's (can be modified)
 var RoomSchema = new mongoose.Schema({
 	userId: String,
-	height: String,
 	length: String,
 	width: String,
 	name: String
