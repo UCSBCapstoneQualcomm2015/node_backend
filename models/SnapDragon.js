@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 
 // Create the schema for RFID's (can be modified)
 var SnapDragonSchema = new mongoose.Schema({
+	name: String,
 	userId: String,
 	ipAddress: String,
 	roomId: String

@@ -204,6 +204,7 @@ exports.put_RFID_tag = function(req, res) {
 // Controller to delete a specific tag
 exports.delete_RFID_tag = function(req,res) {
 	// Use the ID to delete a specific rfid_tag
+	console.log('Tag Deleted: ' + req.body.rfid_tag_id);
 	Rfid.remove({$and: 
 		[{userId: req.params.user_id},
 		{tagId: req.params.rfid_tagId}]}, function(err) {

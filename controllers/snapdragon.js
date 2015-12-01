@@ -149,6 +149,7 @@ exports.post_snapdragon_api = function(req, res) {
 	    	return;
 	    }else{
 	    	// Set the Snapdragon properties from POST data
+	    	snapdragons.name = req.body.name;
 	    	snapdragons.roomId = req.body.roomId;
 	    	snapdragons.ipAddress = req.body.ipAddress;
 	    	snapdragons.userId = req.user._id;
@@ -177,6 +178,7 @@ exports.edit_snapdragon_api = function(req, res) {
 			[{userId: req.params.user_id},
 			{ipAddress: req.params.snapdragon_ip}]}, 
 			{
+				name: req.body.name,
 				roomId: req.body.roomId,
 				ipAddress: req.body.ipAddress
 			},
