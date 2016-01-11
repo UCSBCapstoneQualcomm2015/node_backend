@@ -111,11 +111,14 @@ exports.delete_snapdragon = function(req,res) {
 // 	- delete_snapdragon_api 		- /snapdragons
 
 
-// Controller to GET all the registered Snapdragons 
+// Controller to GET all the registered Snapdragons for a certain room
 exports.get_snapdragons_api = function(req, res) {
 	var headings = ['Room', 'IP Address'];
 	// Use the Snapdragon model to find all the rfid_tags
-	SnapDragon.find({userId: req.params.user_id},function (err, snapdragons) {
+	SnapDragon.find({$and:
+		[{userId: req.params.user_id},
+		{roomId: req.params.room_id}]},
+		function (err, snapdragons) {
 		if (err)
 			res.send(err);
 		res.json(snapdragons);
