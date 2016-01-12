@@ -155,7 +155,9 @@ exports.post_snapdragon_api = function(req, res) {
 	    	snapdragons.name = req.body.name;
 	    	snapdragons.roomId = req.body.roomId;
 	    	snapdragons.ipAddress = req.body.ipAddress;
-	    	snapdragons.userId = req.user._id;
+	    	snapdragons.xCoord = req.body.xCoord;
+	    	snapdragons.yCoord = req.body.yCoord;
+	    	snapdragons.userId = req.params.user_id;
 	    	snapdragons.save(function(err) {
 		    	if (err){
 		    		res.send(err);

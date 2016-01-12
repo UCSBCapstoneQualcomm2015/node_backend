@@ -6,7 +6,9 @@ var SnapDragonSchema = new mongoose.Schema({
 	name: String,
 	userId: String,
 	ipAddress: String,
-	roomId: String
+	roomId: String,
+	xCoord: String, 
+	yCoord: String
 });
 
 // Export the Mongoose model
