@@ -144,7 +144,7 @@ exports.post_ref_tag_api = function(req, res) {
 				console.log('now here');
 				//check = 0;
 				Rfid_ref_tag_room.count({$and:
-					[{name: req.body.roomName},
+					[{_id: req.body.roomId},
 					{userId: req.params.user_id}]},
 					function(err, count) {
 					//console.log(req.params.roomId);
@@ -155,6 +155,7 @@ exports.post_ref_tag_api = function(req, res) {
 					}
 					else {
 						new_ref_tag.userId = req.params.user_id;
+						new_ref_tag.tagName = req.body.tagName;
 						new_ref_tag.tagId = req.body.tagId;
 						new_ref_tag.roomId = req.body.roomId;
 						new_ref_tag.xCoord = req.body.xCoord;
