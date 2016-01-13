@@ -170,35 +170,39 @@ exports.post_RFID_tag = function(req, res) {
 	    	res.json({message: 'New Tag Added', data: rfid_tags});   	
 		}
 	});
-}
+};
 
 
 // Controller to PUT a specific RFID tag ('/api/user/:user_id/rfidtags/:rfid_tagId')
 exports.put_RFID_tag = function(req, res) {
+
+var i = -1;
+
 	Rfid.count({$and:
 		[{userId: req.params.user_id},
-		{tagId: req.body.tagId}]}, function (err, count){ 
-	    if(count>0){
-	    	res.json({message: 'Tag already exists'}); 
-	    	return;
-	    }else{
-			Rfid.update({$and: 
-			[{userId: req.params.user_id},
-			{tagId: req.params.rfid_tagId}]}, 
-			{
-				tagId: req.body.tagId,
-				name: req.body.name
-			},
-			function(err, rfid_tag) {
-				if (err){
+		{tagId: req.params.rfid_tagId}]},
+		function (err, count){
+		i = count; 
+		//console.log(count,"count");
+		//console.log(i,"i");
+	    if(count==0){
+	    	console.log('check0');
+	    	res.json({message: 'Tag does not exist'});
+	    	return; 
+		}else{
+			Rfid.update({tagId: req.params.rfid_tagId}, 
+				req.body,
+				function(err, rfid_tag) {
+					if (err)
 					res.send(err);
-					return;
+				res.json({message: 'RFID tag information updated', data: rfid_tag});
+				return;
 				}
-				res.json({message: 'Updated tag information', data: rfid_tag});
-			});
+			);
 		}
-	});	
-}
+		});
+};
+
 
 
 // Controller to delete a specific tag

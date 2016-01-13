@@ -1,6 +1,6 @@
 // Load the required packages
 var Rfid_ref_tag = require('../models/RFID_ref');
-
+var Rfid_ref_tag_room = require('../models/Room');
 // Controllers for the web app endpoints 
 // 	- Controller 				-Jade Files 				-URL directed to
 //---------------------------------------------------------------------------
@@ -130,26 +130,44 @@ exports.get_ref_tag_api = function(req, res) {
 // ('api/user/:user_id/reftags')
 exports.post_ref_tag_api = function(req, res) {
 	var new_ref_tag = new Rfid_ref_tag();
+	console.log('here');
 	Rfid_ref_tag.count({$and:
 		[{userId: req.params.user_id},
 		 {tagId: req.body.tagId}]},
 		function(err, count) {
+			console.log('count = ', count);
 			if (count > 0) {
-				res.json('Reference tag already exists.');
+				res.json('Reference tag ID already exists.');
 				return;
-			} else {
-				new_ref_tag.userId = req.params.user_id;
-				new_ref_tag.tagId = req.body.tagId;
-				new_ref_tag.roomId = req.body.roomId;
-				new_ref_tag.xCoord = req.body.xCoord;
-				new_ref_tag.yCoord = req.body.yCoord;
-				new_ref_tag.save(function(err) {
-					if (err) 
-						res.send(err);
+			}
+			else{
+				console.log('now here');
+				//check = 0;
+				Rfid_ref_tag_room.count({$and:
+					[{name: req.body.roomName},
+					{userId: req.params.user_id}]},
+					function(err, count) {
+					//console.log(req.params.roomId);
+					console.log('count = ',count);
+					if (count == 0) {
+						res.json('Room corresponding to the tag does not exist, please add the room and its dimensions first');
 						return;
+					}
+					else {
+						new_ref_tag.userId = req.params.user_id;
+						new_ref_tag.tagId = req.body.tagId;
+						new_ref_tag.roomId = req.body.roomId;
+						new_ref_tag.xCoord = req.body.xCoord;
+						new_ref_tag.yCoord = req.body.yCoord;
+						new_ref_tag.save(function(err) {
+							if (err) 
+								res.send(err);
+							return;
+						});
+						res.json('New reference tag saved.');
+						return;
+					}
 				});
-
-				res.json('New reference tag saved.');
 			}
 		});
 };
@@ -157,14 +175,41 @@ exports.post_ref_tag_api = function(req, res) {
 // PUT Editing function for reference tags
 // ('/api/user/:user_id/reftags/:ref_tagId')
 exports.edit_ref_tag_api = function(req, res) {
-	Rfid_ref_tag.update({tagId: req.params.ref_tagId},
+	var i = -1;
+
+	Rfid_ref_tag.count({$and:
+		[{userId: req.params.user_id},
+		{tagId: req.params.ref_tagId}]},
+		function (err, count){
+		i = count; 
+		//console.log(count,"count");
+		//console.log(i,"i");
+	    if(count==0){
+	    	console.log('check0');
+	    	res.json({message: 'Tag does not exist'});
+	    	return; 
+		}else{
+			Rfid_ref_tag.update({tagId: req.params.ref_tagId}, 
+				req.body,
+				function(err, ref_tag) {
+					if (err)
+					res.send(err);
+				res.json({message: 'Reference tag information updated', data: ref_tag});
+				return;
+				}
+			);
+		}
+		});
+};
+
+	/*Rfid_ref_tag.update({tagId: req.params.ref_tagId},
 		req.body,
 		function(err, ref_tag) {
 			if (err) 
 				res.send(err);
 			res.json({message: 'Reference tag information updated', data: ref_tag});
 		});
-};
+};*/
 
 
 // Controller to delete a specific reference tag

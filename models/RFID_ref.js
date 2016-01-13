@@ -8,6 +8,7 @@ var Rfid_ref_schema = new mongoose.Schema({
 	roomId: String,
 	xCoord: String,
 	yCoord: String
+
 });
 
 // Export the schema 
