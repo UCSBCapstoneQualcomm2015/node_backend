@@ -103,9 +103,9 @@ exports.delete_ref_tag = function(req, res) {
 // GET function for all reference tags from a certain room
 // ('/api/user/:user_id/reftags/rooms/:room_id'),
 exports.get_ref_tags_api = function(req, res) {
-	Rfid_ref_tag_room.find({$and:
+	Rfid_ref_tag.find({$and:
 		[{userId: req.params.user_id},
-		{_id: req.params.room_id}]},
+		{roomId: req.params.room_id}]},
 		function(err, ref_tags) {
 		if (err)
 			res.send(err);
