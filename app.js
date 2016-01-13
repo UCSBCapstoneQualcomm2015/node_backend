@@ -165,6 +165,8 @@ app.delete('/api/user/:user_id/rfidtags/:rfid_tagId', passportConf.is_authentica
 //      Reference Tags
 app.get('/api/user/:user_id/reftags/', passportConf.is_authenticated_api, refController.get_ref_tags_api);
 app.get('/api/user/:user_id/reftags/:ref_tagId', passportConf.is_authenticated_api, refController.get_ref_tag_api);
+//Before posting a reg tag we should check if the Room name is in the Database, else give them error
+//Need to implement ^^^
 app.post('/api/user/:user_id/reftags/', passportConf.is_authenticated_api, refController.post_ref_tag_api);
 app.put('/api/user/:user_id/reftags/:ref_tagId', passportConf.is_authenticated_api, refController.edit_ref_tag_api);
 app.delete('/api/user/:user_id/reftags/:ref_tagId', passportConf.is_authenticated_api, refController.delete_ref_tag_api);
@@ -177,7 +179,13 @@ app.delete('/api/user/:user_id/rooms/:room_name', passportConf.is_authenticated_
 //      Snapdragon
 app.get('/api/user/:user_id/snapdragons', passportConf.is_authenticated_api, snapController.get_snapdragons_api);
 app.get('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.get_snapdragon_api);
+//For POSTING a snapdragon, header is roomId but because the main identfier/key for the
+//Room is the Room name, it should be changed to roomName. Also, now it should be easy to make sure
+//the room name exist in the database, else cant add snapdragon <<< NEED TO IMPLEMENT
 app.post('/api/user/:user_id/snapdragons', passportConf.is_authenticated_api, snapController.post_snapdragon_api);
+//SHould we include the room name? i dont think the user should be able to chage the room name thru the snapdragon put
+//and if they do then it must be linked to the room databse to chnage it as well (relational integrity) 
+//DRAW ER MODEL to show dependencies
 app.put('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.edit_snapdragon_api);
 app.delete('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.delete_snapdragon_api);
 

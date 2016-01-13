@@ -101,7 +101,7 @@ exports.delete_snapdragon = function(req,res) {
 };
 
 
-// Controllers for the web app endpoints 
+// Controllers for the API endpoints 
 // 	- Controller 					- Resource URL
 //-------------------------------------------------------------
 // 	- get_snapdragons_api 			- /snapdragons
@@ -138,7 +138,6 @@ exports.get_snapdragon_api = function(req, res) {
 exports.post_snapdragon_api = function(req, res) {
 	// Create new instance of the Snapdragon model
 	var snapdragons = new SnapDragon();
-	var headings = ['Room Id', 'IP Address'];
 
 	SnapDragon.count({$and:
 		[{userId: req.params.user_id},
@@ -152,7 +151,7 @@ exports.post_snapdragon_api = function(req, res) {
 	    	snapdragons.name = req.body.name;
 	    	snapdragons.roomId = req.body.roomId;
 	    	snapdragons.ipAddress = req.body.ipAddress;
-	    	snapdragons.userId = req.user._id;
+	    	snapdragons.userId = req.params.user_id;
 	    	snapdragons.save(function(err) {
 		    	if (err){
 		    		res.send(err);
@@ -169,7 +168,7 @@ exports.post_snapdragon_api = function(req, res) {
 exports.edit_snapdragon_api = function(req, res) {
 	SnapDragon.count({$and:
 		[{userId: req.params.user_id},
-		{ipAddress: req.body.ipAddress}]}, function (err, count){ 
+		{ipAddress: req.params.ipAddress}]}, function (err, count){ 
 	    if(count>0){
 	    	res.json({message: 'SnapDragon already exists'}); 
 	    	return;

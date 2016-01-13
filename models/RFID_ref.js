@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var Rfid_ref_schema = new mongoose.Schema({
 	userId: String,
 	tagId: String,
-	roomId: String,
+	roomName: String,
 	x_position: String,
 	y_position: String
 });

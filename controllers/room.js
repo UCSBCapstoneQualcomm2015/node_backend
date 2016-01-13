@@ -1,5 +1,6 @@
 // Load the required packages 
 var Room = require('../models/Room');
+var Rfid_ref_tag = require('../models/RFID_ref');
 
 
 
@@ -185,7 +186,34 @@ exports.post_room_api = function(req, res) {
 // Controller to PUT (edit) the information of a specific room
 exports.edit_room_api = function(req, res) {
 	// Use the Room model to modify a room
+
 	Room.count({$and:
+		[{userId: req.params.user_id},
+		{name: req.params.room_name}]},
+		function (err, count){ 
+		//console.log(count,"count");
+	    if(count==0){
+	    	//console.log('check0');
+	    	res.json({message: 'Room does not exist'});
+	    	return; 
+		}else{
+			Room.update({name: req.params.room_name}, 
+				req.body,
+				function(err, room_name) {
+					if (err)
+					res.send(err);
+				res.json({message: 'Room information updated', data: room_name});
+				return;
+				}
+			);
+		}
+		});
+}
+
+
+
+
+	/*Room.count({$and:
 		[{userId: req.params.user_id},
 		{name: req.body.name}]}, function (err, count){ 
 	    if(count>0){
@@ -208,7 +236,7 @@ exports.edit_room_api = function(req, res) {
 			});
 		}
 	});	
-	}
+	}*/
 
 
 // Controller to DELETE the information of a specific room 
@@ -222,7 +250,14 @@ exports.delete_room_api = function(req,res) {
 		if (err) {
 			console.log('There is an error');
 			res.send(err);
-			return
+			return;
+		}
+		else {
+			Rfid_ref_tag.remove({$and:
+				[{userId: req.params.user_id},
+				{roomName: req.params.room_name}]});
+			return;
+
 		}
 		res.json({message: 'Deleted room.'});
 	});
