@@ -255,7 +255,7 @@ exports.delete_room_api = function(req,res) {
 		else {
 			Rfid_ref_tag.remove({$and: 
 				[{userId: req.params.user_id},
-				{_id: req.params.room_id}]}, function(err) {
+				{roomId: req.params.room_id}]}, function(err) {
 					if (err) {
 						console.log('There is an error');
 						res.send(err);
