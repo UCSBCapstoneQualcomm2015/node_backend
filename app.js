@@ -172,10 +172,10 @@ app.put('/api/user/:user_id/reftags/:ref_tagId', passportConf.is_authenticated_a
 app.delete('/api/user/:user_id/reftags/:ref_tagId', passportConf.is_authenticated_api, refController.delete_ref_tag_api);
 //      Rooms
 app.get('/api/user/:user_id/rooms', passportConf.is_authenticated_api, roomController.get_rooms_api);
-app.get('/api/user/:user_id/rooms/:room_name', passportConf.is_authenticated_api, roomController.get_room_api);
+app.get('/api/user/:user_id/rooms/:room_id', passportConf.is_authenticated_api, roomController.get_room_api);
 app.post('/api/user/:user_id/rooms', passportConf.is_authenticated_api, roomController.post_room_api);
-app.put('/api/user/:user_id/rooms/:room_name', passportConf.is_authenticated_api, roomController.edit_room_api);
-app.delete('/api/user/:user_id/rooms/:room_name', passportConf.is_authenticated_api, roomController.delete_room_api);
+app.put('/api/user/:user_id/rooms/:room_id', passportConf.is_authenticated_api, roomController.edit_room_api);
+app.delete('/api/user/:user_id/rooms/:room_id', passportConf.is_authenticated_api, roomController.delete_room_api);
 //      Snapdragon
 app.get('/api/user/:user_id/snapdragons/rooms/:room_id', passportConf.is_authenticated_api, snapController.get_snapdragons_api);
 app.get('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.get_snapdragon_api);

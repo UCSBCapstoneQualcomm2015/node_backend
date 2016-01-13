@@ -142,7 +142,7 @@ exports.get_rooms_api = function(req, res) {
 exports.get_room_api = function(req,res) {
 	Room.find({$and: 
 		[{userId: req.params.user_id},
-		 {name: req.params.room_name}]}, 
+		 {_id: req.params.room_id}]}, 
 		function(err, room) {
 		if (err)
 			res.send(err);
@@ -245,7 +245,7 @@ exports.delete_room_api = function(req,res) {
 	console.log('Tag Deleted: ' + req.body.room_id);
 	Room.remove({$and: 
 		[{userId: req.params.user_id},
-		{name: req.params.room_name}]}, function(err) {
+		{roomId: req.params.room_id}]}, function(err) {
 		
 		if (err) {
 			console.log('There is an error');
@@ -253,12 +253,17 @@ exports.delete_room_api = function(req,res) {
 			return;
 		}
 		else {
-			Rfid_ref_tag.remove({$and:
+			Rfid_ref_tag.remove({$and: 
 				[{userId: req.params.user_id},
-				{roomName: req.params.room_name}]});
-			return;
-
+				{_id: req.params.room_id}]}, function(err) {
+					if (err) {
+						console.log('There is an error');
+						res.send(err);
+						return;
+					}
+					res.json({message: 'Deleted room.'});
+				});
 		}
-		res.json({message: 'Deleted room.'});
 	});
+
 };

@@ -101,11 +101,11 @@ exports.delete_ref_tag = function(req, res) {
 // 	- delete_ref_tag 			- /rfidtags/ref_tags
 
 // GET function for all reference tags from a certain room
-// ('/api/user/:user_id/reftags/:room_id'),
+// ('/api/user/:user_id/reftags/rooms/:room_id'),
 exports.get_ref_tags_api = function(req, res) {
-	Rfid_ref_tag.find({$and:
+	Rfid_ref_tag_room.find({$and:
 		[{userId: req.params.user_id},
-		{roomId: req.params.room_id}]},
+		{_id: req.params.room_id}]},
 		function(err, ref_tags) {
 		if (err)
 			res.send(err);
@@ -144,7 +144,7 @@ exports.post_ref_tag_api = function(req, res) {
 				console.log('now here');
 				//check = 0;
 				Rfid_ref_tag_room.count({$and:
-					[{name: req.body.roomName},
+					[{_id: req.body.roomId},
 					{userId: req.params.user_id}]},
 					function(err, count) {
 					//console.log(req.params.roomId);
@@ -155,6 +155,7 @@ exports.post_ref_tag_api = function(req, res) {
 					}
 					else {
 						new_ref_tag.userId = req.params.user_id;
+						new_ref_tag.name = req.body.name;
 						new_ref_tag.tagId = req.body.tagId;
 						new_ref_tag.roomId = req.body.roomId;
 						new_ref_tag.xCoord = req.body.xCoord;

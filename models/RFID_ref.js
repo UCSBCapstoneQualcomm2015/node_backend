@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 // Define RFID reference schema
 var Rfid_ref_schema = new mongoose.Schema({
 	userId: String,
+	name: String,
 	tagId: String,
 	roomId: String,
 	xCoord: String,
