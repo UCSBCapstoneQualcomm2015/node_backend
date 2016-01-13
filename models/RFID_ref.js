@@ -8,7 +8,8 @@ var Rfid_ref_schema = new mongoose.Schema({
 	tagId: String,
 	roomId: String,
 	xCoord: String,
-	yCoord: String
+	yCoord: String,
+
 
 });
 
