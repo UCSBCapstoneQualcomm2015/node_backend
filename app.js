@@ -163,7 +163,7 @@ app.post('/api/user/:user_id/rfidtags', passportConf.is_authenticated_api, rfidC
 app.put('/api/user/:user_id/rfidtags/:rfid_tagId', passportConf.is_authenticated_api, rfidController.put_RFID_tag);
 app.delete('/api/user/:user_id/rfidtags/:rfid_tagId', passportConf.is_authenticated_api, rfidController.delete_RFID_tag);
 //      Reference Tags
-app.get('/api/user/:user_id/reftags/', passportConf.is_authenticated_api, refController.get_ref_tags_api);
+app.get('/api/user/:user_id/reftags/rooms/:room_id', passportConf.is_authenticated_api, refController.get_ref_tags_api);
 app.get('/api/user/:user_id/reftags/:ref_tagId', passportConf.is_authenticated_api, refController.get_ref_tag_api);
 app.post('/api/user/:user_id/reftags/', passportConf.is_authenticated_api, refController.post_ref_tag_api);
 app.put('/api/user/:user_id/reftags/:ref_tagId', passportConf.is_authenticated_api, refController.edit_ref_tag_api);

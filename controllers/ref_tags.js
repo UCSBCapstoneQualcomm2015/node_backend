@@ -138,13 +138,11 @@ exports.post_ref_tag_api = function(req, res) {
 				res.json('Reference tag already exists.');
 				return;
 			} else {
-
 				new_ref_tag.userId = req.params.user_id;
 				new_ref_tag.tagId = req.body.tagId;
 				new_ref_tag.roomId = req.body.roomId;
-				new_ref_tag.x_position = req.body.x_position;
-				new_ref_tag.y_position = req.body.y_position;
-
+				new_ref_tag.xCoord = req.body.xCoord;
+				new_ref_tag.yCoord = req.body.yCoord;
 				new_ref_tag.save(function(err) {
 					if (err) 
 						res.send(err);

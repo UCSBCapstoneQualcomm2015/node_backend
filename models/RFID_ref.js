@@ -6,8 +6,8 @@ var Rfid_ref_schema = new mongoose.Schema({
 	userId: String,
 	tagId: String,
 	roomId: String,
-	x_position: String,
-	y_position: String
+	xCoord: String,
+	yCoord: String
 });
 
 // Export the schema 
