@@ -1,6 +1,7 @@
 // Load the required packages 
 var Room = require('../models/Room');
 var Rfid_ref_tag = require('../models/RFID_ref');
+var Snapdragon = require('../models/SnapDragon')
 
 
 
@@ -245,7 +246,7 @@ exports.delete_room_api = function(req,res) {
 	console.log('Tag Deleted: ' + req.body.room_id);
 	Room.remove({$and: 
 		[{userId: req.params.user_id},
-		{roomId: req.params.room_id}]}, function(err) {
+		{_id: req.params.room_id}]}, function(err) {
 		
 		if (err) {
 			console.log('There is an error');
@@ -261,8 +262,17 @@ exports.delete_room_api = function(req,res) {
 						res.send(err);
 						return;
 					}
-					res.json({message: 'Deleted room.'});
 				});
+			Snapdragon.remove({$and: 
+				[{userId: req.params.user_id},
+				{roomId: req.params.room_id}]}, function(err) {
+					if (err) {
+						console.log('There is an error');
+						res.send(err);
+						return;
+					}
+				});
+			res.json({message: 'Deleted room.'});
 		}
 	});
 

@@ -166,7 +166,15 @@ exports.post_signup_api = function(req, res, next) {
       if (err) return next(err);
       req.logIn(user, function(err) {
         if (err) return next(err);
-        return res.json({message: 'Successful sign up.'});
+        var token = jwt.sign(user, secrets.tokenSecret, {
+        expiresIn: 12000 // 2 hours limit
+        });
+        return res.json({
+          message: 'Successful sign up.',
+          success: true,
+          token: token,
+          user_id: user._id
+        });
       });
     });
   });
