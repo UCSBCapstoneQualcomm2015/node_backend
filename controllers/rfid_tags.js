@@ -190,7 +190,9 @@ var i = -1;
 	    	res.json({message: 'Tag does not exist'});
 	    	return; 
 		}else{
-			Rfid.update({tagId: req.params.rfid_tagId}, 
+			Rfid.update({$and:
+				[{userId: req.params.user_id},
+				{tagId: req.params.rfid_tagId}]}, 
 				req.body,
 				function(err, rfid_tag) {
 					if (err)

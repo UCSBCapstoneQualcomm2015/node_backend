@@ -190,7 +190,7 @@ exports.edit_room_api = function(req, res) {
 
 	Room.count({$and:
 		[{userId: req.params.user_id},
-		{name: req.params.room_name}]},
+		{_id: req.params.room_id}]},
 		function (err, count){ 
 		//console.log(count,"count");
 	    if(count==0){
@@ -198,7 +198,7 @@ exports.edit_room_api = function(req, res) {
 	    	res.json({message: 'Room does not exist'});
 	    	return; 
 		}else{
-			Room.update({name: req.params.room_name}, 
+			Room.update({_id: req.params.room_id}, 
 				req.body,
 				function(err, room_name) {
 					if (err)

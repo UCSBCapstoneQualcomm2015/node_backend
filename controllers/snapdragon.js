@@ -181,11 +181,7 @@ exports.edit_snapdragon_api = function(req, res) {
 			SnapDragon.update({$and: 
 			[{userId: req.params.user_id},
 			{ipAddress: req.params.snapdragon_ip}]}, 
-			{
-				name: req.body.name,
-				roomId: req.body.roomId,
-				ipAddress: req.body.ipAddress
-			},
+			req.body,
 			function(err, snapdragon) {
 				if (err){
 					res.send(err);
