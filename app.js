@@ -165,8 +165,6 @@ app.delete('/api/user/:user_id/rfidtags/:rfid_tagId', passportConf.is_authentica
 //      Reference Tags
 app.get('/api/user/:user_id/reftags/rooms/:room_id', passportConf.is_authenticated_api, refController.get_ref_tags_api);
 app.get('/api/user/:user_id/reftags/:ref_tagId', passportConf.is_authenticated_api, refController.get_ref_tag_api);
-//Before posting a reg tag we should check if the Room name is in the Database, else give them error
-//Need to implement ^^^
 app.post('/api/user/:user_id/reftags/', passportConf.is_authenticated_api, refController.post_ref_tag_api);
 app.put('/api/user/:user_id/reftags/:ref_tagId', passportConf.is_authenticated_api, refController.edit_ref_tag_api);
 app.delete('/api/user/:user_id/reftags/:ref_tagId', passportConf.is_authenticated_api, refController.delete_ref_tag_api);
