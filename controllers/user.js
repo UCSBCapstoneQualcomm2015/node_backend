@@ -145,9 +145,8 @@ exports.postSignup = function(req, res, next) {
 exports.post_signup_api = function(req, res, next) {
   req.assert('email', 'Email is not valid').isEmail();
   req.assert('password', 'Password must be at least 4 characters long').len(4);
-  //req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
 
-  var errors = req.validationErrors();
+  var errors = req.validationErrors(true);
   if (errors) {
     return res.json({message: errors});
   }
@@ -159,7 +158,7 @@ exports.post_signup_api = function(req, res, next) {
 
   User.findOne({ email: req.body.email} , function(err, existingUser) {
     if (existingUser) {
-      return res.json({ message:'Account with that email address already exists.'});
+      return res.json({ message:'Account with that email address already exists'});
 
     }
     user.save(function(err) {
@@ -170,7 +169,7 @@ exports.post_signup_api = function(req, res, next) {
         expiresIn: 12000 // 2 hours limit
         });
         return res.json({
-          message: 'Successful sign up.',
+          message: 'Successful sign up',
           success: true,
           token: token,
           user_id: user._id
