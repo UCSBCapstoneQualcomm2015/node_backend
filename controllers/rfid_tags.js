@@ -182,28 +182,34 @@ var i = -1;
 		[{userId: req.params.user_id},
 		{tagId: req.params.rfid_tagId}]},
 		function (err, count){
-		i = count; 
-		//console.log(count,"count");
-		//console.log(i,"i");
 	    if(count==0){
 	    	console.log('check0');
 	    	res.json({message: 'Tag does not exist'});
 	    	return; 
 		}else{
-			Rfid.update({$and:
+			Rfid.count({$and:
 				[{userId: req.params.user_id},
-				{tagId: req.params.rfid_tagId}]}, 
-				req.body,
-				function(err, rfid_tag) {
-					if (err)
-					res.send(err);
-				res.json({message: 'RFID tag information updated', data: rfid_tag});
-				return;
+				{tagId: req.body.tagId}]},
+				function (err, count){ 
+			    if(count>0){
+			    	res.json({message: 'Tag already exists'}); 
+			    	return;
+			    }else{
+					Rfid.update({$and:
+						[{userId: req.params.user_id},
+						{tagId: req.params.rfid_tagId}]}, 
+						req.body,
+						function(err, rfid_tag) {
+							if (err)
+							res.send(err);
+						res.json({message: 'RFID tag information updated', data: rfid_tag});
+						return;
+						}
+					);
 				}
-			);
-		}
 		});
-};
+}});
+}
 
 
 
