@@ -157,13 +157,26 @@ exports.post_snapdragon_api = function(req, res) {
 	    	snapdragons.xCoord = req.body.xCoord;
 	    	snapdragons.yCoord = req.body.yCoord;
 	    	snapdragons.userId = req.params.user_id;
-	    	snapdragons.save(function(err) {
-		    	if (err){
-		    		res.send(err);
-		    		return;
+
+	    	var room = Room.findOne({'_id': snapdragons.roomId});
+		    room.select('length width');
+		    room.exec(function (err, r) {
+  				if (err) return handleError(err);
+		   		if(parseInt(snapdragons.xCoord) < 0 || parseInt(snapdragons.yCoord) < 0 || parseInt(snapdragons.xCoord) > parseInt(r.width) || parseInt(snapdragons.yCoord) > parseInt(r.length)){
+		    		res.json({message: 'Enter valid coordinates in room'}); 
+	    			return;
+		    	}else{
+		    	    	snapdragons.save(function(err) {
+		    		    	if (err){
+		    		    		res.send(err);
+		    		    		return;
+		    		    	}	    
+		    	    	});
+		    	    	res.json({message: 'New Snapdragon registered!', data: snapdragons});	
 		    	}
-	    	});
-	    	res.json({message: 'New Snapdragon registered!', data: snapdragons});	
+			})
+
+	    	
 		}
 	});
 }	
@@ -178,20 +191,30 @@ exports.edit_snapdragon_api = function(req, res) {
 	    	res.json({message: 'SnapDragon already exists'}); 
 	    	return;
 	    }else{
-			SnapDragon.update({$and: 
-			[{userId: req.params.user_id},
-			{ipAddress: req.params.snapdragon_ip}]}, 
-			req.body,
-			function(err, snapdragon) {
-				if (err){
-					res.send(err);
-					return;
+	 		var room = Room.findOne({'_id': snapdragons.roomId});
+		    room.select('length width');
+		    room.exec(function (err, r) {
+  				if (err) return handleError(err);
+		   		if(parseInt(req.body.xCoord) < 0 || parseInt(req.body.yCoord) < 0 || parseInt(req.body.xCoord) > parseInt(r.width) || parseInt(req.body.yCoord) > parseInt(r.length)){
+		    		res.json({message: 'Enter valid coordinates in room'}); 
+	    			return;
+		    	}else{
+					SnapDragon.update({$and: 
+					[{userId: req.params.user_id},
+					{ipAddress: req.params.snapdragon_ip}]}, 
+					req.body,
+					function(err, snapdragon) {
+						if (err){
+							res.send(err);
+							return;
+						}
+						res.json({message: 'Updated SnapDragon information', data: snapdragon});
+					});
 				}
-				res.json({message: 'Updated SnapDragon information', data: snapdragon});
-			});
+				});	
 		}
-	});	
-}
+		}
+	)}
 
 // Controller to DELETE a Snapdragon module from database
 exports.delete_snapdragon_api = function(req,res) {

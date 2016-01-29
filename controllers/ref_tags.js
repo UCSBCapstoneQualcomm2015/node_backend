@@ -130,25 +130,21 @@ exports.get_ref_tag_api = function(req, res) {
 // ('api/user/:user_id/reftags')
 exports.post_ref_tag_api = function(req, res) {
 	var new_ref_tag = new Rfid_ref_tag();
-	console.log('here');
 	Rfid_ref_tag.count({$and:
 		[{userId: req.params.user_id},
 		 {tagId: req.body.tagId}]},
 		function(err, count) {
-			console.log('count = ', count);
 			if (count > 0) {
 				res.json({message: 'Reference tag ID already exists.'});
 				return;
 			}
 			else{
-				console.log('now here');
+		
 				//check = 0;
 				Rfid_ref_tag_room.count({$and:
 					[{_id: req.body.roomId},
 					{userId: req.params.user_id}]},
 					function(err, count) {
-					//console.log(req.params.roomId);
-					console.log('count = ',count);
 					if (count == 0) {
 						res.json({message: 'Room corresponding to the tag does not exist, please add the room and its dimensions first'});
 						return;
@@ -160,18 +156,33 @@ exports.post_ref_tag_api = function(req, res) {
 						new_ref_tag.roomId = req.body.roomId;
 						new_ref_tag.xCoord = req.body.xCoord;
 						new_ref_tag.yCoord = req.body.yCoord;
-						new_ref_tag.save(function(err) {
-							if (err) 
-								res.send(err);
-							return;
+
+						var room = Rfid_ref_tag_room.findOne({'_id': new_ref_tag.roomId});
+		    			room.select('length width');
+		    			room.exec(function (err, r) {
+  							if (err) return handleError(err);
+		   					if(parseInt(new_ref_tag.xCoord) < 0 || parseInt(new_ref_tag.yCoord) < 0 || parseInt(new_ref_tag.xCoord) > parseInt(r.width) || parseInt(new_ref_tag.yCoord) > parseInt(r.length)){
+		    					res.json({message: 'Enter valid coordinates in room'}); 
+	    						return;
+		    				}else{
+								new_ref_tag.save(function(err) {
+								if (err) 
+									res.send(err);
+								return;
+								});
+								res.json({message: 'New reference tag saved.'});
+								return;
+							}
 						});
-						res.json({message: 'New reference tag saved.'});
-						return;
 					}
-				});
+				}
+				);
 			}
 		});
 };
+
+
+
 
 // PUT Editing function for reference tags
 // ('/api/user/:user_id/reftags/:ref_tagId')
@@ -197,21 +208,31 @@ exports.edit_ref_tag_api = function(req, res) {
 						return;
 					}
 					else{
-						Rfid_ref_tag.update({tagId: req.params.ref_tagId}, 
-							req.body,
-							function(err, ref_tag) {
-								if (err)
-								res.send(err);
-							res.json({message: 'Reference tag information updated', data: ref_tag});
-							return;
+						var room = Rfid_ref_tag_room.findOne({'_id': new_ref_tag.roomId});
+		    			room.select('length width');
+		    			room.exec(function (err, r) {
+  							if (err) return handleError(err);
+		   					if(parseInt(req.body.xCoord) < 0 || parseInt(req.body.yCoord) < 0 || parseInt(req.body.xCoord) > parseInt(r.width) || parseInt(req.body.yCoord) > parseInt(r.length)){
+		    					res.json({message: 'Enter valid coordinates in room'}); 
+	    						return;
+		    				}else{
+								Rfid_ref_tag.update({tagId: req.params.ref_tagId}, 
+									req.body,
+									function(err, ref_tag) {
+										if (err)
+										res.send(err);
+									res.json({message: 'Reference tag information updated', data: ref_tag});
+									return;
+									}
+
+								);
 							}
+						}
 						);
 					}
-				}
-			);
+				})};
 		}
-	});
-}
+		);};
 
 
 	/*Rfid_ref_tag.update({tagId: req.params.ref_tagId},
