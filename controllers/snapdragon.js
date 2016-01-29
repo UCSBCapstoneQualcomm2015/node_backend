@@ -144,7 +144,7 @@ exports.post_snapdragon_api = function(req, res) {
 
 	SnapDragon.count({$and:
 		[{userId: req.params.user_id},
-		{ipAddress: req.params.snapdragon_ip}]},
+		{ipAddress: req.body.ipAddress}]},
 		function (err, count){ 
 	    if(count>0){
 	    	res.json({message: 'SnapDragon already exists'}); 
@@ -173,8 +173,8 @@ exports.post_snapdragon_api = function(req, res) {
 exports.edit_snapdragon_api = function(req, res) {
 	SnapDragon.count({$and:
 		[{userId: req.params.user_id},
-		{ipAddress: req.params.snapdragon_ip}]}, function (err, count){ 
-	    if(count>0){
+		{ipAddress: req.body.ipAddress}]}, function (err, count){ 
+	    if(count>0 && req.body.ipAddress != req.params.snapdragon_ip){
 	    	res.json({message: 'SnapDragon already exists'}); 
 	    	return;
 	    }else{

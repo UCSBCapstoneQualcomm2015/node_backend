@@ -137,7 +137,7 @@ exports.post_ref_tag_api = function(req, res) {
 		function(err, count) {
 			console.log('count = ', count);
 			if (count > 0) {
-				res.json('Reference tag ID already exists.');
+				res.json({message: 'Reference tag ID already exists.'});
 				return;
 			}
 			else{
@@ -150,7 +150,7 @@ exports.post_ref_tag_api = function(req, res) {
 					//console.log(req.params.roomId);
 					console.log('count = ',count);
 					if (count == 0) {
-						res.json('Room corresponding to the tag does not exist, please add the room and its dimensions first');
+						res.json({message: 'Room corresponding to the tag does not exist, please add the room and its dimensions first'});
 						return;
 					}
 					else {
@@ -165,7 +165,7 @@ exports.post_ref_tag_api = function(req, res) {
 								res.send(err);
 							return;
 						});
-						res.json('New reference tag saved.');
+						res.json({message: 'New reference tag saved.'});
 						return;
 					}
 				});
@@ -182,26 +182,37 @@ exports.edit_ref_tag_api = function(req, res) {
 		[{userId: req.params.user_id},
 		{tagId: req.params.ref_tagId}]},
 		function (err, count){
-		i = count; 
-		//console.log(count,"count");
-		//console.log(i,"i");
 	    if(count==0){
 	    	console.log('check0');
 	    	res.json({message: 'Tag does not exist'});
 	    	return; 
 		}else{
-			Rfid_ref_tag.update({tagId: req.params.ref_tagId}, 
-				req.body,
-				function(err, ref_tag) {
-					if (err)
-					res.send(err);
-				res.json({message: 'Reference tag information updated', data: ref_tag});
-				return;
+			Rfid_ref_tag.count({$and:
+				[{userId: req.params.user_id},
+				 {tagId: req.body.tagId}]},
+				function(err, count) {
+					console.log('count = ', count);
+					if (count > 0 && req.body.tagId != req.params.ref_tagId) {
+						res.json({message: 'Reference tag ID already exists.'});
+						return;
+					}
+					else{
+						Rfid_ref_tag.update({tagId: req.params.ref_tagId}, 
+							req.body,
+							function(err, ref_tag) {
+								if (err)
+								res.send(err);
+							res.json({message: 'Reference tag information updated', data: ref_tag});
+							return;
+							}
+						);
+					}
 				}
 			);
 		}
-		});
-};
+	});
+}
+
 
 	/*Rfid_ref_tag.update({tagId: req.params.ref_tagId},
 		req.body,

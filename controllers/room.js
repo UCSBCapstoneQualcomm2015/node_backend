@@ -198,17 +198,26 @@ exports.edit_room_api = function(req, res) {
 	    	res.json({message: 'Room does not exist'});
 	    	return; 
 		}else{
-			Room.update({_id: req.params.room_id}, 
-				req.body,
-				function(err, room_name) {
-					if (err)
-					res.send(err);
-				res.json({message: 'Room information updated', data: room_name});
-				return;
+			Room.count({$and:
+				[{userId: req.params.user_id},
+				{name: req.body.name}]}, 
+				function (err, count){ 
+			    if(count>0){
+			    	res.json({message: 'Room name already taken'}); 
+			    	return;
+			    }else{
+					Room.update({_id: req.params.room_id}, 
+						req.body,
+						function(err, room_name) {
+							if (err)
+							res.send(err);
+						res.json({message: 'Room information updated', data: room_name});
+						return;
+						}
+					);
 				}
-			);
-		}
 		});
+		}});
 }
 
 
