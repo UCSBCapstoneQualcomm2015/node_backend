@@ -191,7 +191,7 @@ exports.edit_snapdragon_api = function(req, res) {
 	    	res.json({message: 'SnapDragon already exists'}); 
 	    	return;
 	    }else{
-	 		var room = Room.findOne({'_id': snapdragons.roomId});
+	 		var room = Room.findOne({'_id': req.body.roomId});
 		    room.select('length width');
 		    room.exec(function (err, r) {
   				if (err) return handleError(err);

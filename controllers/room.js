@@ -192,20 +192,18 @@ exports.edit_room_api = function(req, res) {
 		[{userId: req.params.user_id},
 		{_id: req.params.room_id}]},
 		function (err, count){ 
-		//console.log(count,"count");
 	    if(count==0){
-	    	//console.log('check0');
 	    	res.json({message: 'Room does not exist'});
 	    	return; 
 		}else{
-			Room.count({$and:
-				[{userId: req.params.user_id},
-				{name: req.body.name}]}, 
-				function (err, count){ 
-			    if(count>0){
-			    	res.json({message: 'Room name already taken'}); 
-			    	return;
-			    }else{
+			// Room.count({$and:
+			// 	[{userId: req.params.user_id},
+			// 	{name: req.body.name}]}, 
+			// 	function (err, count){ 
+			//     if(count>0 && req.params.room_id != req.body.room_id){
+			//     	res.json({message: 'Room name already taken'}); 
+			//     	return;
+			//     }else{
 					Room.update({_id: req.params.room_id}, 
 						req.body,
 						function(err, room_name) {
@@ -216,8 +214,8 @@ exports.edit_room_api = function(req, res) {
 						}
 					);
 				}
+		//});}
 		});
-		}});
 }
 
 
