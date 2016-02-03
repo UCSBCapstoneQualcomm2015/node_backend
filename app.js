@@ -181,6 +181,7 @@ app.post('/api/user/:user_id/snapdragons', passportConf.is_authenticated_api, sn
 app.put('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.edit_snapdragon_api);
 app.delete('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.delete_snapdragon_api);
 
+//app.get('/api/')
 
 /**
  * Error Handler.
