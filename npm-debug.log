@@ -1,7 +1,7 @@
 0 info it worked if it ends with ok
 1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'start' ]
 2 info using npm@2.14.7
-3 info using node@v4.2.0
+3 info using node@v4.2.1
 4 verbose run-script [ 'prestart', 'start', 'poststart' ]
 5 info prestart hackathon-starter@3.1.0
 6 info start hackathon-starter@3.1.0
@@ -18,10 +18,10 @@
 9 verbose stack     at maybeClose (internal/child_process.js:818:16)
 9 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
 10 verbose pkgid hackathon-starter@3.1.0
-11 verbose cwd /home/gucci/Documents/git/nodejsToMongo
-12 error Linux 3.19.0-33-generic
+11 verbose cwd /Users/VictorPorter/Desktop/nodejsToMongo
+12 error Darwin 14.0.0
 13 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "start"
-14 error node v4.2.0
+14 error node v4.2.1
 15 error npm  v2.14.7
 16 error code ELIFECYCLE
 17 error hackathon-starter@3.1.0 start: `node app.js`
