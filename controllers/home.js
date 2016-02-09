@@ -155,9 +155,9 @@ exports.postFind = function(req, res) {
 
 exports.post_find_api = function(req, res) {
 	//Store user ID
-	var uID = req.user._id;
+	var uID = req.params.user_id;
 	//Remove all old user sniffing events
-	UserEvent.remove({userId: req.user._id}, function(err) {
+	UserEvent.remove({userId: uID}, function(err) {
 		if (err) console.log('There is an error');
 	});
 
@@ -182,18 +182,18 @@ exports.post_find_api = function(req, res) {
 	};
 
 	//Create query to get room ID
-	var roomQuery = Room.find({userId: req.user._id, name: req.body.roomName});
+	var roomQuery = Room.find({userId: uID, name: req.body.roomName});
 	roomQuery.select('_id');
 	roomQuery.exec(function (err, roomToSearch) {
 		//Store room ID for future nested queries
 		var roomId = roomToSearch[0]._id;
 
 		//Create query for item ID
-		var query = Rfid.find({userId: req.user._id, name: req.body.name});
+		var query = Rfid.find({userId: uID, name: req.body.name});
 		query.select('tagId');
 		query.exec(function (err, item) {
 			//Create query for Snapdragon IP Addresses
-		  	var query2 = SnapDragon.find({userId: req.user._id, roomId: roomId});
+		  	var query2 = SnapDragon.find({userId: uID, roomId: roomId});
 		  	query2.select('ipAddress');
 		  	query2.exec(function (err, snapDragons) {
 		  		//Store number of snapdragons within room to trigger event finished 
@@ -201,7 +201,7 @@ exports.post_find_api = function(req, res) {
 		  		var snapCount = snapDragons.length;
 
 		  		//Create query to acquire reference tag ids within the room
-		  		var query3 = Rfid_ref_tag.find({userId: req.user._id, roomId: roomId});
+		  		var query3 = Rfid_ref_tag.find({userId: req.uID, roomId: roomId});
 		  		query3.select('tagId');
 		  		query3.exec(function (err, refData) {
 			  		console.log("reference tags in this room " + refData);
@@ -256,7 +256,7 @@ exports.post_find_api = function(req, res) {
 							  	xCoord = 4;
 							  	yCoord = 5;
 							  }
-							  res.json({message: "Item find result.", xCoord: xCoord, yCoord: yCoord});
+							  res.json({xCoord: xCoord, yCoord: yCoord});
 							});
 						}
 					  });
