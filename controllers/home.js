@@ -242,12 +242,21 @@ exports.post_find_api = function(req, res) {
 							  mode: 'text',
 							  args: [algData, item[0].tagId, refTagData]
 							};
+
+							var xCoord, yCoord;
 							 
 							PythonShell.run('parse_to_json.py', options, function (err, results) {
 							  if (err) throw err;
 							  // results is an array consisting of messages collected during execution 
 							  console.log('results: ', results);
-							  res.json({message: "Item find result.", xCoord: "5", yCoord: "6"});
+							  if(algData.indexOf(item[0].tagId) <= -1) {
+							  	xCoord = -1;
+							  	yCoord = -1;
+							  } else{
+							  	xCoord = 4;
+							  	yCoord = 5;
+							  }
+							  res.json({message: "Item find result.", xCoord: xCoord, yCoord: yCoord});
 							});
 						}
 					  });
