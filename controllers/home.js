@@ -1,6 +1,7 @@
 // Load the required packages 
 var Rfid = require('../models/RFID');
 var Room = require('../models/Room');
+var Rfid_ref_tag = require('../models/RFID_ref');
 var UserEvent = require('../models/UserEvent');
 var SnapDragon = require('../models/SnapDragon');
 var PythonShell = require('python-shell');
@@ -35,94 +36,235 @@ exports.getFind = function(req, res) {
 
 
 exports.postFind = function(req, res) {
+	//Store user ID
+	var uID = req.user._id;
 	//Remove all old user sniffing events
 	UserEvent.remove({userId: req.user._id}, function(err) {
 		if (err) console.log('There is an error');
 	});
 
-	var query = Rfid.find({userId: req.user._id, name: req.body.name});
-	query.select('tagId');
-	console.log(req.user._id + " " + req.body.roomName) 
+	//Create a new user event
+	var newEvent = new UserEvent();
+	newEvent.userId = uID;
+	newEvent.distances = [];
 
-	query.exec(function (err, item) {
-		console.log("item = " + item);
-
-		var uID = req.user._id;
-	  	var query2 = SnapDragon.find({userId: req.user._id, roomId: req.body.roomName});
-
-	  	query2.select('ipAddress');
-
-	  	query2.exec(function (err, snapDragons){
-	  		console.log("snapdragons in this room: " + snapDragons);
-	  		var snapCount = snapDragons.length;
-	  		var snapCallbackCount = 0;
-
-	  		var newEvent = new UserEvent();
-			newEvent.userId = uID;
-			newEvent.distances = [];
-
-			// Save the event info and check for errors
-			newEvent.save(function(err) {
-				if (err)
-					console.log(err);
-			});
-
-	  		var ports = ['10000','10001','8002','8003'];
-			var options = {
-			  host: '192.168.1.104',
-			  path: '/',
-			  port: '8080',
-			  //This is the only line that is new. `headers` is an object with the headers to request
-			  headers: {'custom': 'Custom Header Demo works', 'objID': '4'}
-			};
-
-			callback = function(response) {
-			  var str = ''
-			  response.on('data', function (chunk) {
-			    str += chunk;
-			  });
-			  response.on('end', function () {
-			    console.log(str);
-
-				newEvent.distances.push(str);
-				newEvent.save(function(err) {
-			    	if (err){
-			    		res.send(err);
-			    		return;
-			    	}
-		    	});
-
-				snapCallbackCount += 1;
-				if (snapCallbackCount >= snapCount) {
-					console.log('All responses from SnapDragons received. User = ' + uID);
-
-					//TODO: CALL ALGORITHM HERE
-					console.log("Event after receiving all: " + newEvent);
-
-					newEvent.remove(function(err) {
-						if (err) console.log('There is an error');
-					});
-				}
-				
-
-			  });
-			}
-
-			for(var i = 0; i < snapCount; i++) {
-				console.log("Port = " + ports[i]);
-				options['host'] = snapDragons[i]['ipAddress'];
-				options['port'] = ports[i];
-				var req = http.request(options, callback);
-				req.on('error', function(err) {
-				    // Handle error
-				});
-				req.end();
-
-				//sleep(3000);
-			}
-			res.render('home');
-	  	});
+	// Save the event info and check for errors
+	newEvent.save(function(err) {
+		if (err)
+			console.log(err);
 	});
 
+	//Create header options for connecting to snapdragon python servers
+	var options = {
+	  host: '192.168.1.104',
+	  path: '/',
+	  port: '8000',
+	  //This is the only line that is new. `headers` is an object with the headers to request
+	  headers: {'custom': 'Custom Header Demo works', 'objID': '4'}
+	};
+
+	//Create query to get room ID
+	var roomQuery = Room.find({userId: req.user._id, name: req.body.roomName});
+	roomQuery.select('_id');
+	roomQuery.exec(function (err, roomToSearch) {
+		//Store room ID for future nested queries
+		var roomId = roomToSearch[0]._id;
+
+		//Create query for item ID
+		var query = Rfid.find({userId: req.user._id, name: req.body.name});
+		query.select('tagId');
+		query.exec(function (err, item) {
+			//Create query for Snapdragon IP Addresses
+		  	var query2 = SnapDragon.find({userId: req.user._id, roomId: roomId});
+		  	query2.select('ipAddress');
+		  	query2.exec(function (err, snapDragons) {
+		  		//Store number of snapdragons within room to trigger event finished 
+		  		console.log("snapdragons in this room: " + snapDragons);
+		  		var snapCount = snapDragons.length;
+
+		  		//Create query to acquire reference tag ids within the room
+		  		var query3 = Rfid_ref_tag.find({userId: req.user._id, roomId: roomId});
+		  		query3.select('tagId');
+		  		query3.exec(function (err, refData) {
+			  		console.log("reference tags in this room " + refData);
+			  		var snapCallbackCount = 0;
+
+					callback = function(response) {
+					  var str = ''
+					  response.on('data', function (chunk) { str += chunk; });
+
+					  response.on('end', function () {
+						newEvent.distances.push(str);
+						newEvent.save(function(err) {
+					    	if (err){ res.send(err); return; }
+				    	});
+
+						snapCallbackCount += 1;
+						if (snapCallbackCount >= snapCount) {
+							console.log('All responses from SnapDragons received.');
+
+							//Build formatted input for algorithm
+							var algData = 'snaps: [';
+							for(var i = 0; i < snapCount; i++) {
+								algData += newEvent.distances[i];
+								if (i != snapCount - 1) algData += ',';
+							} algData += "]";
+
+							var refTagData = '';
+							for(var i = 0; i < refData.length; i++){
+								refTagData += refData[i].tagId;
+								if (i != refData.length - 1) refTagData += ',';
+							}
+
+							console.log("Reference Tag Data: " + refTagData);
+							console.log("Algorithm String: " + algData);
+							console.log("Item ID: " + item[0].tagId);
+
+							var options = {
+							  mode: 'text',
+							  args: [algData, item[0].tagId, refTagData]
+							};
+							 
+							PythonShell.run('parse_to_json.py', options, function (err, results) {
+							  if (err) throw err;
+							  // results is an array consisting of messages collected during execution 
+							  console.log('results: ', results);
+							  res.json({message: "Item find result.", xCoord: "5", yCoord: "6"});
+							});
+						}
+					  });
+					}
+
+					for(var i = 0; i < snapCount; i++) {
+						options['host'] = snapDragons[i]['ipAddress'];
+
+						var req = http.request(options, callback);
+						req.on('error', function(err) {
+						    // Handle error
+						});
+						req.end();
+					}
+			  	});
+		  	});
+		});
+	});	
+}
+
+
+
+
+exports.post_find_api = function(req, res) {
+	//Store user ID
+	var uID = req.user._id;
+	//Remove all old user sniffing events
+	UserEvent.remove({userId: req.user._id}, function(err) {
+		if (err) console.log('There is an error');
+	});
+
+	//Create a new user event
+	var newEvent = new UserEvent();
+	newEvent.userId = uID;
+	newEvent.distances = [];
+
+	// Save the event info and check for errors
+	newEvent.save(function(err) {
+		if (err)
+			console.log(err);
+	});
+
+	//Create header options for connecting to snapdragon python servers
+	var options = {
+	  host: '192.168.1.104',
+	  path: '/',
+	  port: '8000',
+	  //This is the only line that is new. `headers` is an object with the headers to request
+	  headers: {'custom': 'Custom Header Demo works', 'objID': '4'}
+	};
+
+	//Create query to get room ID
+	var roomQuery = Room.find({userId: req.user._id, name: req.body.roomName});
+	roomQuery.select('_id');
+	roomQuery.exec(function (err, roomToSearch) {
+		//Store room ID for future nested queries
+		var roomId = roomToSearch[0]._id;
+
+		//Create query for item ID
+		var query = Rfid.find({userId: req.user._id, name: req.body.name});
+		query.select('tagId');
+		query.exec(function (err, item) {
+			//Create query for Snapdragon IP Addresses
+		  	var query2 = SnapDragon.find({userId: req.user._id, roomId: roomId});
+		  	query2.select('ipAddress');
+		  	query2.exec(function (err, snapDragons) {
+		  		//Store number of snapdragons within room to trigger event finished 
+		  		console.log("snapdragons in this room: " + snapDragons);
+		  		var snapCount = snapDragons.length;
+
+		  		//Create query to acquire reference tag ids within the room
+		  		var query3 = Rfid_ref_tag.find({userId: req.user._id, roomId: roomId});
+		  		query3.select('tagId');
+		  		query3.exec(function (err, refData) {
+			  		console.log("reference tags in this room " + refData);
+			  		var snapCallbackCount = 0;
+
+					callback = function(response) {
+					  var str = ''
+					  response.on('data', function (chunk) { str += chunk; });
+
+					  response.on('end', function () {
+						newEvent.distances.push(str);
+						newEvent.save(function(err) {
+					    	if (err){ res.send(err); return; }
+				    	});
+
+						snapCallbackCount += 1;
+						if (snapCallbackCount >= snapCount) {
+							console.log('All responses from SnapDragons received.');
+
+							//Build formatted input for algorithm
+							var algData = 'snaps: [';
+							for(var i = 0; i < snapCount; i++) {
+								algData += newEvent.distances[i];
+								if (i != snapCount - 1) algData += ',';
+							} algData += "]";
+
+							var refTagData = '';
+							for(var i = 0; i < refData.length; i++){
+								refTagData += refData[i].tagId;
+								if (i != refData.length - 1) refTagData += ',';
+							}
+
+							console.log("Reference Tag Data: " + refTagData);
+							console.log("Algorithm String: " + algData);
+							console.log("Item ID: " + item[0].tagId);
+
+							var options = {
+							  mode: 'text',
+							  args: [algData, item[0].tagId, refTagData]
+							};
+							 
+							PythonShell.run('parse_to_json.py', options, function (err, results) {
+							  if (err) throw err;
+							  // results is an array consisting of messages collected during execution 
+							  console.log('results: ', results);
+							  res.json({message: "Item find result.", xCoord: "5", yCoord: "6"});
+							});
+						}
+					  });
+					}
+
+					for(var i = 0; i < snapCount; i++) {
+						options['host'] = snapDragons[i]['ipAddress'];
+
+						var req = http.request(options, callback);
+						req.on('error', function(err) {
+						    // Handle error
+						});
+						req.end();
+					}
+			  	});
+		  	});
+		});
+	});	
 }
 

@@ -146,7 +146,6 @@ app.post('/snapdragons', passportConf.isAuthenticated, snapController.delete_sna
 app.post('/snapdragons/edit_snapdragon_form_in', passportConf.isAuthenticated, snapController.get_edit_snapdragon_form);
 app.post('/snapdragons/edit_snapdragon_form', passportConf.isAuthenticated, snapController.edit_snapdragon);
 
-
 app.get('/find', passportConf.isAuthenticated, homeController.getFind);
 app.post('/find', passportConf.isAuthenticated, homeController.postFind);
 
@@ -187,6 +186,7 @@ app.post('/api/user/:user_id/snapdragons', passportConf.is_authenticated_api, sn
 app.put('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.edit_snapdragon_api);
 app.delete('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.delete_snapdragon_api);
 
+app.post('/api/user/:user_id/find', passportConf.is_authenticated_api, homeController.post_find_api);
 //app.get('/api/')
 
 /**
