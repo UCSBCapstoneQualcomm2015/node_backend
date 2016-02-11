@@ -208,7 +208,7 @@ exports.edit_ref_tag_api = function(req, res) {
 						return;
 					}
 					else{
-						var room = Rfid_ref_tag_room.findOne({'_id': new_ref_tag.roomId});
+						var room = Rfid_ref_tag_room.findOne({'_id': req.body.roomId});
 		    			room.select('length width');
 		    			room.exec(function (err, r) {
   							if (err) return handleError(err);

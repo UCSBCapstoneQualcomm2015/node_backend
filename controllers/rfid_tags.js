@@ -183,7 +183,6 @@ var i = -1;
 		{tagId: req.params.rfid_tagId}]},
 		function (err, count){
 	    if(count==0){
-	    	console.log('check0');
 	    	res.json({message: 'Tag does not exist'});
 	    	return; 
 		}else{
@@ -191,7 +190,7 @@ var i = -1;
 				[{userId: req.params.user_id},
 				{tagId: req.body.tagId}]},
 				function (err, count){ 
-			    if(count>0){
+			    if(count>0 && (req.body.tagId != req.params.rfid_tagId)){
 			    	res.json({message: 'Tag already exists'}); 
 			    	return;
 			    }else{
