@@ -183,11 +183,13 @@ exports.post_find_api = function(req, res) {
 
 	//Create query to get room ID
 	var roomQuery = Room.find({userId: uID, name: req.body.roomName});
-	roomQuery.select('_id');
+	//roomQuery.select('_id');
 	roomQuery.exec(function (err, roomToSearch) {
 		//Store room ID for future nested queries
 		var roomId = roomToSearch[0]._id;
-
+		var roomLength = roomToSearch[0].length;
+		var roomWidth = roomToSearch[0].width;
+		console.log("length: " + roomLength + " Width: " + roomWidth);
 		//Create query for item ID
 		var query = Rfid.find({userId: uID, name: req.body.name});
 		query.select('tagId');
@@ -253,8 +255,8 @@ exports.post_find_api = function(req, res) {
 							  	xCoord = -1;
 							  	yCoord = -1;
 							  } else{
-							  	xCoord = 4;
-							  	yCoord = 5;
+							  	xCoord = roomLength / 2;
+							  	yCoord = roomWidth / 2;
 							  }
 							  res.json({xCoord: xCoord, yCoord: yCoord});
 							});
