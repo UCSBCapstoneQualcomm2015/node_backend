@@ -187,9 +187,10 @@ exports.post_find_api = function(req, res) {
 	roomQuery.exec(function (err, roomToSearch) {
 		//Store room ID for future nested queries
 		var roomId = roomToSearch[0]._id;
+
 		var roomLength = roomToSearch[0].length;
 		var roomWidth = roomToSearch[0].width;
-		console.log("length: " + roomLength + " Width: " + roomWidth);
+		//console.log("length: " + roomLength + " Width: " + roomWidth);
 		//Create query for item ID
 		var query = Rfid.find({userId: uID, name: req.body.name});
 		query.select('tagId');
@@ -203,7 +204,7 @@ exports.post_find_api = function(req, res) {
 		  		var snapCount = snapDragons.length;
 
 		  		//Create query to acquire reference tag ids within the room
-		  		var query3 = Rfid_ref_tag.find({userId: req.uID, roomId: roomId});
+		  		var query3 = Rfid_ref_tag.find({userId: uID, roomId: roomId});
 		  		query3.select('tagId');
 		  		query3.exec(function (err, refData) {
 			  		console.log("reference tags in this room " + refData);
@@ -224,33 +225,43 @@ exports.post_find_api = function(req, res) {
 							console.log('All responses from SnapDragons received.');
 
 							//Build formatted input for algorithm
-							var algData = 'snaps: [';
+							var algData = '{"snaps": [';
 							for(var i = 0; i < snapCount; i++) {
 								algData += newEvent.distances[i];
 								if (i != snapCount - 1) algData += ',';
-							} algData += "]";
+							} algData += "]}";
 
-							var refTagData = '';
+							var refTagData = '{"tags" : [';
 							for(var i = 0; i < refData.length; i++){
 								refTagData += refData[i].tagId;
 								if (i != refData.length - 1) refTagData += ',';
 							}
+							refTagData += ']}'
 
-							console.log("Reference Tag Data: " + refTagData);
+							
 							console.log("Algorithm String: " + algData);
 							console.log("Item ID: " + item[0].tagId);
+							console.log("Reference Tag Data: " + refTagData);
 
 							var options = {
 							  mode: 'text',
 							  args: [algData, item[0].tagId, refTagData]
 							};
 
-							var xCoord, yCoord;
+							var xCoord, yCoord, message = "";
 							 
 							PythonShell.run('parse_to_json.py', options, function (err, results) {
-							  if (err) throw err;
+							  if (err) { 
+							  	message = "Error running algorithm: ";
+							  	console.log(message + err);
+							  } else {
+							  	message = results[0];
+							  }
+
 							  // results is an array consisting of messages collected during execution 
-							  console.log('results: ', results);
+							  console.log('results: ', message);
+
+							  //TODO: Replace with actual algorithm output
 							  if(algData.indexOf(item[0].tagId) <= -1) {
 							  	xCoord = -1;
 							  	yCoord = -1;
@@ -258,7 +269,7 @@ exports.post_find_api = function(req, res) {
 							  	xCoord = roomLength / 2;
 							  	yCoord = roomWidth / 2;
 							  }
-							  res.json({xCoord: xCoord, yCoord: yCoord});
+							  res.json({message: message, xCoord: xCoord, yCoord: yCoord});
 							});
 						}
 					  });

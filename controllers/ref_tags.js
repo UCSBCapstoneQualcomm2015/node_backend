@@ -1,6 +1,8 @@
 // Load the required packages
 var Rfid_ref_tag = require('../models/RFID_ref');
 var Rfid_ref_tag_room = require('../models/Room');
+var request = require("request");
+var http = require('http');
 // Controllers for the web app endpoints 
 // 	- Controller 				-Jade Files 				-URL directed to
 //---------------------------------------------------------------------------

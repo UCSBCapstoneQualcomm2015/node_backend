@@ -10,7 +10,15 @@ from rfid_class import *
 
 sample1 = '{"snaps": [{"snap1" : [{"ids": ["a", "b"]}, {"sig_strength" : ["1", "2"]}]}]}'
 sample2 = '{"cars": {"Nissan": [{"model":"Sentra", "doors":4},{"model":"Maxima", "doors":4}],"Ford": [{"model":"Taurus", "doors":4},{"model":"Escort", "doors":4}]}}'
-sample3 = '{"snaps": [{"name": "snap1", "ids":["1", "4", "3","2"], "sig_strength":[23, 25,24,28]}, {"name": "snap2", "ids":["2", "1", "0"], "sig_strength":[21, 28,15]}, {"name": "snap3", "ids":["5", "2", "3","4"], "sig_strength":[21, 29,23,22]}]}'
+sample3 = '{"snaps": [{"name": "snap1", "ids":["1", "4", "3","2"], "sig_strength":[23, 25, 24, 28]}, {"name": "snap2", "ids":["2", "1", "0"], "sig_strength":[21, 28,15]}, {"name": "snap3", "ids":["5", "2", "3","4"], "sig_strength":[21, 29,23,22]}]}'
+sample4 = '{"snaps": [{"ids":[1, 4, 5, 2], "sig_strength":[23, 25, 24, 28]}]}'
+
+
+
+# failed to launch algorithm 1. snapdragon doesn't respond 2. 
+
+# id: "1"
+# distances: [23, 28, -1]
 def test(input):
 	str =  json.loads(input)
 	for snaps in str['snaps']:
@@ -53,14 +61,13 @@ def populate_tag(tag, jsonString):
 ##Should return sqrt(Rfid_tags) tags with distance closest to missing tag
 def nClosest(nSniffers, rfidList, missingID): ##make nSnif = 4 as default 
 	
-
-
 	##assumed: all rfids have locations populated
 	##floor of sqrt (number of sniffer) is what should be left
 	returnable = int ( len(rfidList) ** (.5) )
 
 	missingDist = missingID.getDistances()
 	sniffer_proximity_lists = defaultdict()
+
 
 	for i in range( 0, nSniffers ): ##each sniffer gets a list of rfid tags
 		sniffer_proximity_lists[i] = []
@@ -102,6 +109,25 @@ def compareLists(list1, list2, matches):
 
 	return matches
 
+
+def oneSnapDragon(rfidList, missingID): 
+	minId = -1
+	missingSS = missingID.getDistances()[0]
+	minDiff = 100000
+	for rfid in range(0, len(rfidList)):
+		# print abs(missingSS - rfidList[rfid].getDistances()[0])
+		if (rfidList[rfid].getDistances()[0] != 1):
+			if (abs(missingSS - rfidList[rfid].getDistances()[0]) < minDiff):
+				minDiff = abs(missingSS - rfidList[rfid].getDistances()[0])
+				minId = rfid
+	matches = defaultdict()
+	matches[rfidList[minId].getID()] = 1
+	return matches
+
+
+
+		
+
 #[ x ] call delete blanks (number of snapdragons in json should now be the right number that have the ref value in it)
 #[ x ]initialize reftags class to have correct number of snapdragons (length of json.snaps) all set to -1
 #[ x ]special class for tag we are looking for
@@ -111,34 +137,50 @@ def compareLists(list1, list2, matches):
 
 #[ x ]compareLists: check for matches in two different lists
 
+##CASE FOR IF ITEM IS NOT FOUND 
+##CASE FOR IF ONLY ONE SNAPDRAGON 
 
 #rfidCLass-> id: ?, sig_strengths= [-1] * snaps.length
 
 
 #inputs: json, itemId, array of refTagIds
 if __name__=="__main__":
-	itemId = sys.argv[2]
-	snapdragons = delete_blanks(sys.argv[1], itemId)
-	refTags = sys.argv[3].split(',')
-	# snapdragons = delete_blanks(sample3,"4")
-	tags = initialize_tag_objects(refTags, len(snapdragons['snaps']))
-	# tags = initialize_tag_objects(["1","2","3","5"], len(snapdragons['snaps']))
+	try:
+		itemId = sys.argv[2]
+		snapdragons = delete_blanks(sys.argv[1], itemId)
+		refTags = yaml.load(sys.argv[3])['tags']
+		# snapdragons = delete_blanks(sample3 ,"4")
+		# print(snapdragons['snaps'])
+		# print len(snapdragons['snaps'])
+		# del snapdragons['snaps'][0]
+		tags = initialize_tag_objects(refTags, len(snapdragons['snaps']))
+		# tags = initialize_tag_objects(["1","2","3","5"], len(snapdragons['snaps']))
 
-	item = initialize_item("4", len(snapdragons['snaps']))
-
-
-	item = populate_tag(item, snapdragons)
-
-
-	for tag in tags:
-		tag = populate_tag(tag, snapdragons)
+		item = initialize_item(4, len(snapdragons['snaps']))
 
 
-	closestResults = nClosest(len(snapdragons['snaps']), tags, item)
+		item = populate_tag(item, snapdragons)
 
-	matches = defaultdict()
-	for i in range(0, len(closestResults) - 1):
-		matches = compareLists(closestResults[i],closestResults[i+1], matches)
-	
-	print json.dumps(dict(matches))
 
+		for tag in tags:
+			tag = populate_tag(tag, snapdragons)
+	 
+
+		if (len(snapdragons['snaps']) > 1):
+			closestResults = nClosest(len(snapdragons['snaps']), tags, item)
+			print closestResults
+			matches = defaultdict()
+			for i in range(0, len(closestResults) - 1):
+				matches = compareLists(closestResults[i],closestResults[i + 1], matches)
+
+		elif (len(snapdragons['snaps']) == 1):
+			matches = oneSnapDragon(tags, item)
+		
+		else:	#0 snapdragons -> should be handled from node side
+			print ":("
+			sys.exit(0)
+
+		
+		print json.dumps(dict(matches))
+	except Exception, e:
+		print e

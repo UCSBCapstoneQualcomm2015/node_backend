@@ -1,5 +1,7 @@
 // Load the required packages 
 var Rfid = require('../models/RFID');
+var request = require("request");
+var http = require('http');
 
 
 // Controllers for the web app endpoints 
@@ -157,17 +159,56 @@ exports.post_RFID_tag = function(req, res) {
 	    if(count>0){
 	    	res.json({message: 'Tag already exists'}); 
 	    	return;
-	    }else{
+	    } else{
 	    	rfid_tags.tagId = req.body.tagId;
 	    	rfid_tags.name = req.body.name; 
 	    	rfid_tags.userId = req.params.user_id;
-	    	rfid_tags.save(function(err) {
-	    	if (err){
-	    		res.send(err);
-	    		return;
-	    	}
+
+			rfid_tags.save(function(err) {
+		    	if (err){
+		    		res.send(err);
+		    		return;
+		    	}
 	    	});
-	    	res.json({message: 'New Tag Added', data: rfid_tags});   	
+			res.json({message: 'New Tag Added', data: rfid_tags});
+			/*--------------------------------------------------------*/
+			/*
+			var successString = "Success", failureString = "Failure";
+			var dedicatedSnapRegister = '192.168.2.9';
+
+			callback = function(response) {
+			  	var str = ''
+			  	response.on('data', function (chunk) { str += chunk; });
+			  	response.on('end', function () {
+					console.log(str);
+					if (str.indexOf(successString)) {
+				
+				    	res.json({message: 'New Tag Added', data: rfid_tags});   	
+					} else {
+						res.json({message: 'Failed to program rfid with sensor.'})
+					}
+		    	});
+			}
+			console.log(rfid_tags._id);
+			console.log(req.body._id);
+			//Create header options for connecting to snapdragon python servers
+			var options = { host: dedicatedSnapRegister, path: '/writeRfid', port: '8000',
+				headers: { 'tagId' : rfid_tags._id} };
+
+			var r = http.request(options, callback);
+			r.on('error', function(err) {
+			    // Handle error
+			});
+			r.on('socket', function (socket) {
+			    socket.setTimeout(3000);  
+			    socket.on('timeout', function() {
+			    	console.log("time out")
+			        r.abort();
+			    });
+			});
+			r.end();*/
+			/*--------------------------------------------------------*/
+
 		}
 	});
 };
