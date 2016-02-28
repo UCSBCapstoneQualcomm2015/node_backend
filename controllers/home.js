@@ -101,7 +101,7 @@ exports.post_find_api = function(req, res) {
 
 							var refTagData = '{"tags" : [';
 							for(var i = 0; i < refData.length; i++){
-								refTagData += refData[i].tagId;
+								refTagData += "'" + refData[i].tagId + "'";
 								if (i != refData.length - 1) refTagData += ',';
 							}
 							refTagData += ']}';
@@ -110,10 +110,11 @@ exports.post_find_api = function(req, res) {
 							console.log("Algorithm String: " + algData);
 							console.log("Item ID: " + item[0].tagId);
 							console.log("Reference Tag Data: " + refTagData);
+							itemString = "'" + item[0].tagId + "'";
 
 							var python_options = {
 							  mode: 'text',
-							  args: [algData, item[0].tagId, refTagData]
+							  args: [algData, itemString, refTagData]
 							};
 
 							var xCoord, yCoord, message = "";
