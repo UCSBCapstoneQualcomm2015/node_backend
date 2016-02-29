@@ -10,7 +10,6 @@ var http = require('http');
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
 
-
 exports.index = function(req, res) {
   res.render('home', {
     title: 'Home'
@@ -70,7 +69,7 @@ exports.post_find_api = function(req, res) {
 
 		  		//Create query to acquire reference tag ids within the room
 		  		var query3 = Rfid_ref_tag.find({userId: uID, roomId: roomId});
-		  		query3.select('tagId');
+		  		//query3.select('tagId', 'xCoord', 'yCoord');
 		  		query3.exec(function (err, refData) {
 			  		console.log("reference tags in this room " + refData);
 			  		var snapCallbackCount = 0;
@@ -81,10 +80,10 @@ exports.post_find_api = function(req, res) {
 					  response.on('data', function (chunk) { str += chunk; });
 
 					  response.on('end', function () {
-					  	console.log(snapDragons[snapCallbackCount]['ipAddress'] + str);
+					  	//console.log(snapDragons[snapCallbackCount]['ipAddress'] + str);
 						newEvent.distances.push(str);
 						newEvent.save(function(err) {
-					    	if (err){ res.send(err); return; }
+					    	if (err){ console.log(err); return; }
 				    	});
 
 						snapCallbackCount += 1;
@@ -101,19 +100,22 @@ exports.post_find_api = function(req, res) {
 
 							var refTagData = '{"tags" : [';
 							for(var i = 0; i < refData.length; i++){
-								refTagData += "'" + refData[i].tagId + "'";
+								refTagData += '{"id":' + "\"" + refData[i].tagId + "\",";
+								refTagData +=  '"xCoord":' + "\"" + refData[i].xCoord + "\",";
+								refTagData +=  '"yCoord":' + "\"" + refData[i].yCoord + "\"}";
 								if (i != refData.length - 1) refTagData += ',';
 							}
 							refTagData += ']}';
 
-							
+							itemString = item[0].tagId;
+
+
 							console.log("Algorithm String: " + algData);
-							console.log("Item ID: " + item[0].tagId);
+							console.log("Item ID: " +  itemString);
 							console.log("Reference Tag Data: " + refTagData);
-							itemString = "'" + item[0].tagId + "'";
+
 
 							var python_options = {
-							  mode: 'text',
 							  args: [algData, itemString, refTagData]
 							};
 
@@ -128,17 +130,11 @@ exports.post_find_api = function(req, res) {
 							  }
 
 							  // results is an array consisting of messages collected during execution 
-							  console.log('results: ', message);
+							  console.log('results: ', results);
 
 							  //TODO: Replace with actual algorithm output
-							  if(algData.indexOf(item[0].tagId) <= -1) {
-							  	xCoord = -1;
-							  	yCoord = -1;
-							  } else{
-							  	xCoord = roomLength / 2;
-							  	yCoord = roomWidth / 2;
-							  }
-							  res.json({message: message, xCoord: xCoord, yCoord: yCoord});
+							  myObj = JSON.parse(message);
+							  res.json({ xCoord: myObj['xCoord'], yCoord: myObj['yCoord'] });
 							});
 						}
 						else {

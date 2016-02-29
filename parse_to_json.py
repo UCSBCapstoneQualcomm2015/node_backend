@@ -22,34 +22,37 @@ vic_tags = '{"tags" : ["120000000000","220000000000","320000000000","31000000000
 # id: "1"
 # distances: [23, 28, -1]
 def test(input):
-	str =  json.loads(input)
-	for snaps in str['snaps']:
+	myStr =  json.loads(input)
+	for snaps in myStr['snaps']:
 		print snaps['name']
 
 def delete_blanks(input, itemId):
-	str = yaml.load(input)
+	myStr = yaml.load(input)
 	tags = []
 	index = 0
-	#valid sniffers: go through list of sniffers and if id we are looking for is not contained, delete that sniffer
-	for snap in str['snaps']:
+	# valid sniffers: go through list of sniffers and if id we are looking for is not contained, delete that sniffer
+	for snap in myStr['snaps']:
 		if (itemId not in snap['ids']):
-			del str['snaps'][index]
+			del myStr['snaps'][index]
 		else:
 			index = index + 1
-	return str
+	return myStr
 
 #tag initialized to correct number of sniffers (sig strength of -1) and store in array
 def initialize_tag_objects(tagArray, num_snaps):
 	tags = []
-	for tagId in tagArray:
-		tagId = str(tagId)
-		tags.append(Rfid_tag(tagId, num_snaps))
+	for tag in tagArray:
+		tagId = str(tag['id'])
+		xCoord =float(tag['xCoord'])
+		yCoord = float(tag['yCoord'])
+		tags.append(Rfid_tag(tagId, num_snaps, xCoord, yCoord))
 	return tags
 
 #returns item object
 def initialize_item(itemId, num_snaps):
 	itemId = str(itemId)
-	return Rfid_tag(itemId, num_snaps)
+
+	return Rfid_tag(itemId, num_snaps, -1, -1)
 
 #CAN BE USED FOR REFERENCE TAG OR ITEM: param: ref/item object, json; return = correctly filled in object 
 def populate_tag(tag, jsonString):
@@ -133,7 +136,20 @@ def oneSnapDragon(rfidList, missingID):
 	matches[rfidList[minId].getID()] = 1
 	return matches
 
-
+def getLocation(matches, tags):
+	x = 0
+	y = 0
+	counter = 0
+	for key, value in matches.iteritems():    
+		for tag in tags:
+			if tag.getID() == key:
+				x += (tag.getXCoord() * value)
+				y += (tag.getYCoord() * value)
+				counter += value
+	xCoord = x / float(counter)
+	yCoord = y / float(counter)
+	resultDict = {'xCoord': xCoord, 'yCoord': yCoord}
+	return resultDict 
 
 		
 
@@ -174,17 +190,18 @@ if __name__=="__main__":
 
 
 	if (len(snapdragons['snaps']) > 1):
-		print "len snapdragons: " , len(snapdragons['snaps'])
 		closestResults = nClosest(len(snapdragons['snaps']), tags, item)
 		matches = defaultdict()
 		index = 0
 		for k in closestResults.keys():
 			if len(closestResults[k]) < int ( len(tags) ** (.5)):
 				del closestResults[k]
-		print "closest results: " , len(closestResults)
+		# for i in xrange(len(closestResults)):
+		# 	for a in xrange(len(closestResults[i])):
+		# 		print closestResults[i][a].getID()
+		# 	print ""		
 		for i in range(0, len(closestResults) - 1):
 			for j in range(1, len(closestResults)):
-
 				matches = compareLists(closestResults[i],closestResults[j], matches)
 
 	elif (len(snapdragons['snaps']) == 1):
@@ -192,7 +209,7 @@ if __name__=="__main__":
 	
 	else:	#0 snapdragons -> should be handled from node side
 		print ":("
-
+	print json.dumps(getLocation(matches, tags))
 	
-	print json.dumps(dict(matches))
+	# print json.dumps(dict(matches))
 

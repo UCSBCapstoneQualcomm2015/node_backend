@@ -17,12 +17,14 @@ class Rfid_tag:
 #######################################
 ##            constructor            ##
 #######################################
-	def __init__(self, id, num_snaps):
+	def __init__(self, id, num_snaps, xCoord, yCoord):
 		
 		self.id = id ##should be const
 
 		##all vars init to 0, use init function to initialize properly, or setters 
 		self.snaps = [-1] * num_snaps
+		self.xCoord = xCoord
+		self.yCoord = yCoord
 
 #######################################
 ##            initialize             ##
@@ -42,10 +44,21 @@ class Rfid_tag:
 
 
 #######################################
-##   GETTERS FOR SNIFFER DISTANCES    #
+##   GETTERS  ##
 #######################################
 	def getDistances(self):
 		return self.snaps
+
+	def getXCoord(self):
+		return self.xCoord
+
+	def getYCoord(self):
+		return self.yCoord
+
+	def getID(self):
+		## [TODO]: write the location algorithm here
+		return self.id
+
 	
 # 	def getDistances(self):
 # 		distances = [ self._dist_A, self._dist_B, self._dist_C, self._dist_D ]
@@ -91,8 +104,6 @@ class Rfid_tag:
 # #######################################
 # ##             ID getter             ##
 # #######################################
-	def getID(self):
-		## [TODO]: write the location algorithm here
-		return self.id
+
 
 ##end_class
