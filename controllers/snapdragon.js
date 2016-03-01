@@ -162,7 +162,7 @@ exports.post_snapdragon_api = function(req, res) {
 		    room.select('length width');
 		    room.exec(function (err, r) {
   				if (err) return handleError(err);
-		   		if(parseInt(snapdragons.xCoord) < 0 || parseInt(snapdragons.yCoord) < 0 || parseInt(snapdragons.xCoord) > parseInt(r.width) || parseInt(snapdragons.yCoord) > parseInt(r.length)){
+		   		if(parseFloat(snapdragons.xCoord) < 0 || parseFloat(snapdragons.yCoord) < 0 || parseFloat(snapdragons.xCoord) > parseInt(r.width) || parseFloat(snapdragons.yCoord) > parseInt(r.length)){
 		    		res.json({message: 'Enter valid coordinates in room'}); 
 	    			return;
 		    	}else{
@@ -195,7 +195,7 @@ exports.edit_snapdragon_api = function(req, res) {
 		    room.select('length width');
 		    room.exec(function (err, r) {
   				if (err) return handleError(err);
-		   		if(parseInt(req.body.xCoord) < 0 || parseInt(req.body.yCoord) < 0 || parseInt(req.body.xCoord) > parseInt(r.width) || parseInt(req.body.yCoord) > parseInt(r.length)){
+		   		if(parseFloat(req.body.xCoord) < 0 || parseFloat(req.body.yCoord) < 0 || parseFloat(req.body.xCoord) > parseInt(r.width) || parseFloat(req.body.yCoord) > parseInt(r.length)){
 		    		res.json({message: 'Enter valid coordinates in room'}); 
 	    			return;
 		    	}else{

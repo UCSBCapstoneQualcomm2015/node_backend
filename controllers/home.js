@@ -61,7 +61,6 @@ exports.post_find_api = function(req, res) {
 		query.exec(function (err, item) {
 			//Create query for Snapdragon IP Addresses
 		  	var query2 = SnapDragon.find({userId: uID, roomId: roomId});
-		  	query2.select('ipAddress');
 		  	query2.exec(function (err, snapDragons) {
 		  		//Store number of snapdragons within room to trigger event finished 
 		  		console.log("snapdragons in this room: " + snapDragons);
@@ -94,7 +93,11 @@ exports.post_find_api = function(req, res) {
 							//Build formatted input for algorithm
 							var algData = '{"snaps": [';
 							for(var i = 0; i < snapCount; i++) {
-								algData += newEvent.distances[i];
+								snapResponse = JSON.parse(newEvent.distances[i]);
+								snapResponse['xCoord'] = snapDragons[i]['xCoord'];
+								snapResponse['yCoord'] = snapDragons[i]['yCoord'];
+								algData += JSON.stringify(snapResponse);
+
 								if (i != snapCount - 1) algData += ',';
 							} algData += "]}";
 
@@ -121,7 +124,7 @@ exports.post_find_api = function(req, res) {
 
 							var xCoord, yCoord, message = "";
 							 
-							PythonShell.run('parse_to_json.py', python_options, function (err, results) {
+							PythonShell.run('algorithm.py', python_options, function (err, results) {
 							  if (err) { 
 							  	message = "Error running algorithm: ";
 							  	console.log(message + err);
@@ -134,6 +137,10 @@ exports.post_find_api = function(req, res) {
 
 							  //TODO: Replace with actual algorithm output
 							  myObj = JSON.parse(message);
+							  console.log('myObj: ', myObj);
+							  console.log(myObj['xCoord']);
+							  console.log(myObj['yCoord']);
+
 							  res.json({ xCoord: myObj['xCoord'], yCoord: myObj['yCoord'] });
 							});
 						}
