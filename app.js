@@ -35,6 +35,7 @@ var rfidController = require('./controllers/rfid_tags');
 var roomController = require('./controllers/room');
 var snapController = require('./controllers/snapdragon');
 var refController = require('./controllers/ref_tags');
+var historyController = require('./controllers/history');
 
 /**
  * API keys and Passport configuration.
@@ -185,9 +186,16 @@ app.post('/api/user/:user_id/snapdragons', passportConf.is_authenticated_api, sn
 //DRAW ER MODEL to show dependencies
 app.put('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.edit_snapdragon_api);
 app.delete('/api/user/:user_id/snapdragons/:snapdragon_ip', passportConf.is_authenticated_api, snapController.delete_snapdragon_api);
-
 app.post('/api/user/:user_id/find', passportConf.is_authenticated_api, homeController.post_find_api);
-//app.get('/api/')
+//        History
+app.get('/api/user/:user_id/history/:rfid_tagId', passportConf.is_authenticated_api, historyController.get_history_api);
+app.post('/api/user/:user_id/history/', passportConf.is_authenticated_api, historyController.post_history_api);
+
+
+app.put('/api/user/:user_id/history/:rfid_tagId', passportConf.is_authenticated_api, roomController.edit_room_api);
+app.delete('/api/user/:user_id/history/:rfid_tagId', passportConf.is_authenticated_api, roomController.delete_room_api);
+
+
 
 /**
  * Error Handler.
