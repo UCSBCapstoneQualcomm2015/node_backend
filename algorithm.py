@@ -4,7 +4,7 @@ import sys
 import yaml
 import math
 from heapq import nsmallest
-
+import copy
 
 import collections
 from collections import defaultdict
@@ -33,12 +33,25 @@ def delete_blanks(input, itemId):
 	myStr = yaml.load(input)
 	tags = []
 	index = 0
-	# valid sniffers: go through list of sniffers and if id we are looking for is not contained, delete that sniffer
-	for snap in myStr['snaps']:
+	to_del = []
+	snapList = copy.deepcopy(myStr['snaps'])
+
+	for snap in snapList:
 		if (itemId not in snap['ids']):
-			del myStr['snaps'][index]
-		else:
-			index = index + 1
+			myStr['snaps'].remove(snap)
+	# valid sniffers: go through list of sniffers and if id we are looking for is not contained, delete that sniffer
+	# for snap in myStr['snaps']:
+	# 	print ""
+	# 	print snap
+	# 	if (itemId not in snap['ids']):
+	# 		to_del.append(index)
+	# 	index += 1
+	# 		# del myStr['snaps'][index]
+	# 		# print ""
+	# 		# print myStr['snaps'][0]
+	# for i in to_del:
+	# 	del myStr['snaps'][i]
+	
 	return myStr
 
 #tag initialized to correct number of sniffers (sig strength of -1) and store in array
@@ -243,6 +256,7 @@ if __name__=="__main__":
 	for i in xrange(len(snapdragons['snaps'])):
 		snap_distances.append(get_snap_distances(snapdragons['snaps'][i], refTags))
 
+	#print len(snapdragons['snaps'])
 
 	for tag in tags:
 		# print tag.getID()
@@ -263,13 +277,16 @@ if __name__=="__main__":
 			for j in range(1, len(closestResults)):
 				matches = compareLists(closestResults[i],closestResults[j], matches)
 
+		print json.dumps(getLocation(matches, tags))
+
 	elif (len(snapdragons['snaps']) == 1):
 		matches = oneSnapDragon(tags, item)
-	
+		print json.dumps(getLocation(matches, tags))
+
 	else:	#0 snapdragons -> should be handled from node side
-		print ":("
+		print json.dumps({'xCoord': "-1", 'yCoord': "-1"})
+
 	# print matches
-	print json.dumps(getLocation(matches, tags))
 	
 	# print json.dumps(dict(matches))
 

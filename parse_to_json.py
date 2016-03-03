@@ -2,6 +2,7 @@ import json
 import csv
 import sys
 import yaml
+import copy
 
 import collections
 from collections import defaultdict
@@ -30,12 +31,12 @@ def delete_blanks(input, itemId):
 	myStr = yaml.load(input)
 	tags = []
 	index = 0
-	# valid sniffers: go through list of sniffers and if id we are looking for is not contained, delete that sniffer
-	for snap in myStr['snaps']:
+	to_del = []
+	snapList = copy.deepcopy(myStr['snaps'])
+
+	for snap in snapList:
 		if (itemId not in snap['ids']):
-			del myStr['snaps'][index]
-		else:
-			index = index + 1
+			myStr['snaps'].remove(snap)
 	return myStr
 
 #tag initialized to correct number of sniffers (sig strength of -1) and store in array
@@ -57,11 +58,12 @@ def initialize_item(itemId, num_snaps):
 #CAN BE USED FOR REFERENCE TAG OR ITEM: param: ref/item object, json; return = correctly filled in object 
 def populate_tag(tag, jsonString):
 	#if a specific value doesn't exist, keep the -1
-
+	#[-1, -1, -1, -1]
 	for i in range(len(tag.snaps)):
 		currentSnap = jsonString['snaps'][i]
 		if (currentSnap['ids'].count(tag.getID()) == 1): 		#SNAPDRAGON LOCATED THIS TAG
 			tag.snaps[i] = currentSnap['sig_strength'][currentSnap['ids'].index(tag.getID())]
+		
 	# print tag.getID()
 	# print tag.getDistances()
 	# print " "
@@ -188,7 +190,6 @@ if __name__=="__main__":
 		# print tag.getID()
 		tag = populate_tag(tag, snapdragons)
 
-
 	if (len(snapdragons['snaps']) > 1):
 		closestResults = nClosest(len(snapdragons['snaps']), tags, item)
 		matches = defaultdict()
@@ -203,13 +204,14 @@ if __name__=="__main__":
 		for i in range(0, len(closestResults) - 1):
 			for j in range(1, len(closestResults)):
 				matches = compareLists(closestResults[i],closestResults[j], matches)
+		print json.dumps(getLocation(matches, tags))
 
 	elif (len(snapdragons['snaps']) == 1):
 		matches = oneSnapDragon(tags, item)
-	
+		print json.dumps(getLocation(matches, tags))
+
 	else:	#0 snapdragons -> should be handled from node side
-		print ":("
-	print json.dumps(getLocation(matches, tags))
+		print json.dumps({'xCoord': "-1", 'yCoord': "-1"})
 	
 	# print json.dumps(dict(matches))
 

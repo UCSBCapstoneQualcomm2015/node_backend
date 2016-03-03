@@ -1,5 +1,5 @@
 // Load the required packages 
-var itemHistory = require('../models/ItemHistory');
+var itemHistory = require('../models/History');
 
 // Controller to GET specific item's history ('/api/user/:user_id/history/:rfid_tagId')
 exports.get_history_api = function(req, res) {

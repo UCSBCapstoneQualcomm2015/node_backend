@@ -9,6 +9,7 @@ var request = require("request");
 var http = require('http');
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
+var itemHistory = require('../models/History');
 
 exports.index = function(req, res) {
   res.render('home', {
@@ -19,6 +20,7 @@ exports.index = function(req, res) {
 
 exports.post_find_api = function(req, res) {
 	//Store user ID
+	var finished = false;
 	var uID = req.params.user_id;
 	//Remove all old user sniffing events
 	UserEvent.remove({userId: uID}, function(err) {
@@ -63,14 +65,14 @@ exports.post_find_api = function(req, res) {
 		  	var query2 = SnapDragon.find({userId: uID, roomId: roomId});
 		  	query2.exec(function (err, snapDragons) {
 		  		//Store number of snapdragons within room to trigger event finished 
-		  		console.log("snapdragons in this room: " + snapDragons);
+		  		//console.log("snapdragons in this room: " + snapDragons);
 		  		var snapCount = snapDragons.length;
 
 		  		//Create query to acquire reference tag ids within the room
 		  		var query3 = Rfid_ref_tag.find({userId: uID, roomId: roomId});
 		  		//query3.select('tagId', 'xCoord', 'yCoord');
 		  		query3.exec(function (err, refData) {
-			  		console.log("reference tags in this room " + refData);
+			  		//console.log("reference tags in this room " + refData);
 			  		var snapCallbackCount = 0;
 			  		var currentIteration = 0;
 
@@ -87,7 +89,7 @@ exports.post_find_api = function(req, res) {
 
 						snapCallbackCount += 1;
 
-						if (snapCallbackCount >= snapCount) {
+						if (snapCallbackCount >= snapCount && finished == false) {
 							console.log('All responses from SnapDragons received.');
 
 							//Build formatted input for algorithm
@@ -122,27 +124,32 @@ exports.post_find_api = function(req, res) {
 							  args: [algData, itemString, refTagData]
 							};
 
-							var xCoord, yCoord, message = "";
+							var myObj = JSON.parse('{"xCoord": -1, "yCoord": -1}');
 							 
 							PythonShell.run('algorithm.py', python_options, function (err, results) {
 							  if (err) { 
-							  	message = "Error running algorithm: ";
-							  	console.log(message + err);
+							  	console.log( err);
+							 
 							  } else {
-							  	message = results[0];
+							  	  message = results[0];
+
+							  	  // results is an array consisting of messages collected during execution 
+								  console.log('results: ', results);
+
+								  //TODO: Replace with actual algorithm output
+								  myObj = JSON.parse(message);
+								  console.log('myObj: ', myObj);
+								  console.log(myObj['xCoord']);
+								  console.log(myObj['yCoord']);
 							  }
+							  addHistory(uID, item[0].tagId, myObj['xCoord'], myObj['yCoord'], roomId);
 
-							  // results is an array consisting of messages collected during execution 
-							  console.log('results: ', results);
 
-							  //TODO: Replace with actual algorithm output
-							  myObj = JSON.parse(message);
-							  console.log('myObj: ', myObj);
-							  console.log(myObj['xCoord']);
-							  console.log(myObj['yCoord']);
-
-							  res.json({ xCoord: myObj['xCoord'], yCoord: myObj['yCoord'] });
+							  res.status(200).json({ xCoord: myObj['xCoord'], yCoord: myObj['yCoord'] });
+							  finished = true;
 							});
+
+						
 						}
 						else {
 							options['host'] = snapDragons[snapCallbackCount]['ipAddress'];
@@ -170,3 +177,21 @@ exports.post_find_api = function(req, res) {
 	});	
 }
 
+
+function addHistory(uID, tagId, xCoord, yCoord, roomId) {
+	var history = new itemHistory();
+	now = new Date();
+
+	history.created_at = now;
+	history.userId = uID
+    history.tagId = tagId;
+    history.xCoord = xCoord;
+    history.yCoord = yCoord;
+    history.roomId = roomId;
+    
+	history.save(function(err) {
+    	if (err){
+    		console.log(err);
+    	}
+	});
+}
